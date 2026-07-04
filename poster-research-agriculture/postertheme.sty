@@ -1,0 +1,468 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Agriculture -- a harvest morning on the farm. Grain-cream
+%  paper, deep loden-green ink, ONE barn-red accent with wheat gold in
+%  support; an Alegreya serif title in the manner of a farmer's
+%  almanac. Wheat-ear section markers, a farmstead vignette (sun, red
+%  barn, silo, wheat spray) in the header, a faint morning sun in the
+%  top-left corner, sprouting seedlings down the side margins, and
+%  along the bottom a rolling patchwork of fields with contour-plough
+%  furrows, hay bales, and a windmill on the horizon. The one dark
+%  panel -- the theorem card -- is a plot of freshly turned soil,
+%  fenced in wheat gold: the ground the main result grows from.
+%
+%  One clear mathematical idea: 120 x 72 cm landscape, three columns
+%  with a centre-stage hierarchy -- the main theorem sits in the ONLY
+%  dark panel above one strong visual (the Calabi-Yau quintic surface).
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-agriculture poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Source Sans 3) + almanac serif titles + STIX math -----
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplaySerif{Alegreya}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, BoldFont=*-Bold, ItalicFont=*-Italic,
+  Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: grain paper, loden ink, barn red, wheat gold --------------
+\RequirePackage{xcolor}
+\definecolor{GrainPaper}{RGB}{250,246,230}  % warm straw-cream ground
+\definecolor{WheatGold}{RGB}{196,148,54}    % wheat ears, gold hairline
+\definecolor{StrawLight}{RGB}{232,206,140}  % pale straw fields
+\definecolor{LeafGreen}{RGB}{114,144,72}    % young-crop green
+\definecolor{OliveDeep}{RGB}{74,92,46}      % hedgerow / furrow green
+\definecolor{CardGold}{RGB}{224,182,96}     % label gold on the dark card
+\definecolor{AUnavy}{RGB}{42,54,30}         % main text; card ground (loden)
+\definecolor{AUorange}{RGB}{168,50,32}      % barn-red accent
+\definecolor{AUgray}{RGB}{101,101,80}       % secondary text, olive gray
+\pagecolor{GrainPaper}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=AUnavy, linkcolor=AUnavy,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% A wheat ear drawn inline: a short stem carrying three grain pairs and
+% a tip grain. #1 = grain colour, #2 = stem colour, #3 = scale.
+\newcommand{\WheatEar}[3]{%
+  \tikz[baseline=-0.62ex,scale=#3]{%
+    \draw[#2,line width=1.3pt,line cap=round] (0,-0.30) -- (0,0.26);
+    \foreach \y/\s in {0.00/1.0, 0.14/0.88, 0.27/0.74}{
+      \fill[#1,rotate around={36:(0.085,\y)}]
+        (0.085,\y) ellipse ({0.15*\s} and {0.062*\s});
+      \fill[#1,rotate around={-36:(-0.085,\y)}]
+        (-0.085,\y) ellipse ({0.15*\s} and {0.062*\s});}
+    \fill[#1] (0,0.40) ellipse (0.058 and 0.115);}}
+% Quiet section label (loden, tracked caps) led by a wheat ear;
+% [AUorange] (barn red) marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{AUnavy} m}{%
+  \par\vspace{0.78em}%
+  {\raggedright\PosterSemibold\fontsize{22.6}{27.0}\selectfont\color{#1}%
+   \WheatEar{WheatGold}{OliveDeep}{0.95}%
+   \hspace{0.30em}\addfontfeatures{LetterSpace=5}\MakeUppercase{#2}\par}%
+  \vspace{0.10em}%
+  {\color{LeafGreen!60}\rule{0.82\linewidth}{1.35pt}\par}%
+  \vspace{-0.04em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{24.1}{33.0}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.2}{26.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% Header vignette: morning sun, red barn with silo, and a wheat spray
+% on a soft green rise -- the farmstead in miniature.
+\newcommand{\StyleMotif}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    % soft rise of ground
+    \fill[LeafGreen!30]
+      (0.0,0.30) .. controls (1.3,0.72) and (2.9,0.38) .. (5.5,0.62)
+      -- (5.5,0.0) -- (0.0,0.0) -- cycle;
+    % morning sun with rays
+    \fill[WheatGold!90] (0.78,1.80) circle (0.33);
+    \foreach \a in {0,45,...,315}{
+      \draw[WheatGold!75,line width=1.6pt,line cap=round]
+        ($(0.78,1.80)+(\a:0.46)$) -- ($(0.78,1.80)+(\a:0.66)$);}
+    % barn: body, gambrel roof, door
+    \fill[AUorange] (2.02,0.34) rectangle (3.10,1.06);
+    \fill[AUorange!62!black]
+      (1.90,1.06) -- (2.18,1.38) -- (2.56,1.50) -- (2.94,1.38)
+      -- (3.22,1.06) -- cycle;
+    \fill[GrainPaper] (2.40,0.34) rectangle (2.72,0.80);
+    \draw[AUorange!70,line width=1.0pt]
+      (2.40,0.34) -- (2.72,0.80) (2.40,0.80) -- (2.72,0.34);
+    % silo with dome
+    \fill[AUgray!85] (3.34,0.34) rectangle (3.78,1.30);
+    \fill[AUgray!85] (3.56,1.30) circle (0.22);
+    \draw[GrainPaper!80,line width=0.9pt]
+      (3.34,0.62) -- (3.78,0.62) (3.34,0.92) -- (3.78,0.92);
+    % wheat spray, leaning in the breeze
+    \draw[OliveDeep,line width=1.5pt,line cap=round]
+      (4.42,0.10) .. controls (4.46,0.60) .. (4.36,1.02);
+    \draw[OliveDeep,line width=1.5pt,line cap=round]
+      (4.78,0.08) .. controls (4.86,0.66) .. (4.96,1.14);
+    \draw[OliveDeep,line width=1.5pt,line cap=round]
+      (5.10,0.12) .. controls (5.22,0.52) .. (5.44,0.86);
+    \foreach \x/\y/\r in {4.36/1.02/8, 4.96/1.14/-6, 5.44/0.86/-24}{
+      \begin{scope}[shift={(\x,\y)},rotate=\r,scale=0.82]
+        \foreach \yy/\s in {0.00/1.0, 0.13/0.86, 0.25/0.72}{
+          \fill[WheatGold,rotate around={36:(0.08,\yy)}]
+            (0.08,\yy) ellipse ({0.14*\s} and {0.058*\s});
+          \fill[WheatGold,rotate around={-36:(-0.08,\yy)}]
+            (-0.08,\yy) ellipse ({0.14*\s} and {0.058*\s});}
+        \fill[WheatGold] (0,0.37) ellipse (0.054 and 0.105);
+      \end{scope}}
+    % two birds over the fields
+    \draw[AUnavy!45,line width=1.4pt,line cap=round]
+      (1.52,2.06) .. controls (1.64,2.20) .. (1.76,2.08)
+      (1.76,2.08) .. controls (1.88,2.20) .. (2.00,2.06);
+    \draw[AUnavy!38,line width=1.2pt,line cap=round]
+      (2.18,2.30) .. controls (2.28,2.42) .. (2.38,2.32)
+      (2.38,2.32) .. controls (2.48,2.42) .. (2.58,2.30);
+  \end{tikzpicture}}
+% Full-page backdrop: loden frame with a wheat-gold hairline, a faint
+% morning sun in the top-left corner, birds by the logo, seedlings and
+% grain dots down the side margins, and rolling fields along the bottom
+% with contour-plough furrows, hay bales, and a windmill.
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % double frame: loden border + wheat-gold hairline
+    \draw[AUnavy,line width=7pt]
+      ([xshift=1.08cm,yshift=-1.08cm]current page.north west)
+      rectangle
+      ([xshift=-1.08cm,yshift=1.08cm]current page.south east);
+    \draw[WheatGold!90,line width=1.6pt]
+      ([xshift=1.62cm,yshift=-1.62cm]current page.north west)
+      rectangle
+      ([xshift=-1.62cm,yshift=1.62cm]current page.south east);
+    % rolling fields along the bottom (back to front): a pale straw
+    % hill on the left, a young-crop green rise on the right, and a
+    % deep-olive ploughed field rolling across the front
+    \fill[StrawLight!52]
+      ($(current page.south west)+(0,1.6cm)$)
+      .. controls +(14cm,2.9cm) and +(-16cm,0.6cm) ..
+      ($(current page.south west)+(46cm,2.6cm)$)
+      .. controls +(14cm,-1.6cm) and +(-12cm,0.1cm) ..
+      ($(current page.south west)+(80cm,0.9cm)$)
+      -- ($(current page.south west)+(80cm,0cm)$)
+      -- (current page.south west) -- cycle;
+    \fill[LeafGreen!38]
+      ($(current page.south west)+(56cm,0.7cm)$)
+      .. controls +(16cm,2.6cm) and +(-18cm,0.2cm) ..
+      ($(current page.south west)+(106cm,2.4cm)$)
+      .. controls +(6cm,0.9cm) and +(-6cm,-0.4cm) ..
+      ($(current page.south east)+(0,3.1cm)$)
+      -- ($(current page.south west)+(120cm,0cm)$)
+      -- ($(current page.south west)+(56cm,0cm)$) -- cycle;
+    \fill[OliveDeep!26]
+      ($(current page.south west)+(0,0.7cm)$)
+      .. controls +(22cm,2.0cm) and +(-24cm,0.7cm) ..
+      ($(current page.south west)+(70cm,1.75cm)$)
+      .. controls +(18cm,0.9cm) and +(-16cm,-0.5cm) ..
+      ($(current page.south west)+(120cm,1.15cm)$)
+      -- (current page.south east)
+      -- (current page.south west) -- cycle;
+    % contour-plough furrows following the front field
+    \foreach \dy/\o in {0.34/46, 0.66/40, 0.98/33, 1.30/26}{
+      \draw[OliveDeep!\o,line width=1.6pt]
+        ($(current page.south west)+(0,0.7cm-0.45*\dy cm)$)
+        .. controls +(22cm,2.0cm) and +(-24cm,0.7cm) ..
+        ($(current page.south west)+(70cm,1.75cm-\dy cm)$)
+        .. controls +(18cm,0.9cm) and +(-16cm,-0.5cm) ..
+        ($(current page.south west)+(120cm,1.15cm-0.75*\dy cm)$);}
+    % crop rows on the green rise
+    \foreach \dy/\o in {0.55/42, 1.05/34, 1.55/26}{
+      \draw[LeafGreen!\o,line width=1.4pt]
+        ($(current page.south west)+(58cm,0.55cm)$)
+        .. controls +(15cm,2.4cm-0.45*\dy cm) and +(-17cm,0.2cm) ..
+        ($(current page.south west)+(106cm,2.4cm-\dy cm)$)
+        .. controls +(6cm,0.8cm) and +(-6cm,-0.3cm) ..
+        ($(current page.south east)+(0,3.1cm-1.1*\dy cm)$);}
+    % hay bales resting on the straw hillside
+    \foreach \x/\y/\r in {27/2.55/0.40, 33.5/2.30/0.32}{
+      \fill[WheatGold!68]
+        ($(current page.south west)+(\x cm,\y cm)$) circle (\r cm);
+      \draw[WheatGold,line width=1.2pt]
+        ($(current page.south west)+(\x cm,\y cm)$) circle ({0.58*\r cm});
+      \draw[WheatGold,line width=1.2pt]
+        ($(current page.south west)+(\x cm-\r cm,\y cm)$)
+        arc[start angle=180,end angle=360,radius=\r cm];}
+    % windmill on the green rise
+    \draw[OliveDeep!62,line width=1.7pt,line cap=round]
+      ($(current page.south west)+(93.4cm,1.7cm)$) --
+      ($(current page.south west)+(94.3cm,3.85cm)$)
+      ($(current page.south west)+(95.2cm,1.7cm)$) --
+      ($(current page.south west)+(94.3cm,3.85cm)$);
+    \draw[OliveDeep!50,line width=1.2pt]
+      ($(current page.south west)+(93.75cm,2.55cm)$) --
+      ($(current page.south west)+(94.85cm,2.55cm)$);
+    \foreach \a in {35,125,215,305}{
+      \draw[OliveDeep!62,line width=1.5pt,line cap=round]
+        ($(current page.south west)+(94.3cm,3.85cm)$) --
+        ($(current page.south west)+(94.3cm,3.85cm)+(\a:1.0cm)$);}
+    \fill[OliveDeep!72] ($(current page.south west)+(94.3cm,3.85cm)$) circle (0.10cm);
+    % birds in the sky, left of the logo
+    \draw[AUnavy!32,line width=1.7pt,line cap=round]
+      ($(current page.north west)+(98.0cm,-4.1cm)$)
+      .. controls +(0.14cm,0.16cm) .. +(0.28cm,0.02cm)
+      ($(current page.north west)+(98.28cm,-4.08cm)$)
+      .. controls +(0.14cm,0.16cm) .. +(0.28cm,0.02cm);
+    \draw[AUnavy!26,line width=1.5pt,line cap=round]
+      ($(current page.north west)+(100.3cm,-3.1cm)$)
+      .. controls +(0.12cm,0.14cm) .. +(0.24cm,0.02cm)
+      ($(current page.north west)+(100.54cm,-3.08cm)$)
+      .. controls +(0.12cm,0.14cm) .. +(0.24cm,0.02cm);
+    \draw[AUnavy!22,line width=1.4pt,line cap=round]
+      ($(current page.north west)+(95.7cm,-5.3cm)$)
+      .. controls +(0.11cm,0.13cm) .. +(0.22cm,0.02cm)
+      ($(current page.north west)+(95.92cm,-5.28cm)$)
+      .. controls +(0.11cm,0.13cm) .. +(0.22cm,0.02cm);
+    % seedlings and grain dots down the side margins. Each seedling is
+    % drawn in a shifted LOCAL frame: "rotate around" cannot take a
+    % calc ($...$) coordinate as its centre (the leaves swing across
+    % the page), but a scope shift can.
+    \foreach \side/\sgn in {west/1, east/-1}{
+      \foreach \y in {12.5, 26.5, 40.5, 54.5}{
+        \begin{scope}[shift={($(current page.north \side)+(\sgn*2.30cm,-\y cm)$)}]
+          \draw[OliveDeep!48,line width=1.3pt,line cap=round]
+            (0,-0.34) -- (0,0.02);
+          \fill[LeafGreen!58,rotate around={34:(0,-0.08)}]
+            (-0.17,-0.08) ellipse (0.17 and 0.062);
+          \fill[LeafGreen!58,rotate around={-34:(0,-0.08)}]
+            (0.17,-0.08) ellipse (0.17 and 0.062);
+        \end{scope}}
+      \foreach \y in {19.5, 33.5, 47.5, 60.5}{
+        \fill[WheatGold!62]
+          ($(current page.north \side)+(\sgn*2.30cm,-\y cm)$) circle (0.075cm);}}
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+
+
+% Centred title, with the logo top-right. Equal-width side blocks (left
+% motif + right logo) make the centre block -- and so the title -- sit
+% exactly in the middle of the page.
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedright
+  \StyleMotif
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplaySerif\fontsize{90}{97}\selectfont \DisplayTitle%
+   \hspace{0.32em}\raisebox{0.10ex}{\WheatEar{WheatGold}{OliveDeep}{1.65}}\par}
+  \vspace{0.35em}
+  {\DisplaySerif\itshape\fontsize{38}{48}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.70em}
+  {\fontsize{28}{37}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.4cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.72em}
+{\centering\PosterSemibold\fontsize{38}{49}\selectfont\color{AUorange}\Contribution\par}
+\vspace{0.34em}
+{\color{AUorange}\rule{\textwidth}{2.5pt}}
+
+\vspace{0.58em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{47.8cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.5pt}%
+\fcolorbox{WheatGold}{AUnavy}{\begin{minipage}{\dimexpr\textwidth-3em}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24}{30}\selectfont\color{CardGold}%
+   \WheatEar{CardGold}{StrawLight!85}{1.0}\hspace{0.28em}%
+   \addfontfeatures{LetterSpace=8}THEOREM\quad
+   {\addfontfeatures{LetterSpace=5}(\MakeUppercase{#1})}\par}
+  \vspace{0.5em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{AUnavy}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.36cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{AUgray!45}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=3.6cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

@@ -1,0 +1,444 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Astronomy -- a night at the observatory, drawn as a page from
+%  a celestial atlas. Moonlit cool-white paper, deep-space indigo ink,
+%  star-gold accents; a star-studded night ribbon along the top, a faint
+%  orbit system in one corner, constellation charts (the Big Dipper,
+%  Cassiopeia) along the bottom margin, and an EB Garamond serif title
+%  in the manner of a classical star atlas. The one dark panel -- the
+%  theorem card -- is a gold-rimmed piece of night sky.
+%
+%  One clear mathematical idea: 120 x 72 cm landscape, three columns
+%  with a centre-stage hierarchy -- the main theorem sits in the ONLY
+%  dark panel above one strong visual (the Calabi-Yau quintic surface).
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-astronomy poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Source Sans 3) + atlas serif titles + STIX math -------
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplaySerif{EBGaramond}[Path=fonts/, Extension=.otf,
+  UprightFont=*-SemiBold, ItalicFont=*-Italic, Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: moonlit paper, deep-space indigo, star gold ---------------
+\RequirePackage{xcolor}
+\definecolor{NightPaper}{RGB}{245,247,252}   % moonlit cool-white ground
+\definecolor{NightSky}{RGB}{15,26,52}        % deep-space indigo (ribbons)
+\definecolor{StarGold}{RGB}{233,196,106}     % bright star gold (on dark)
+\definecolor{GoldDeep}{RGB}{172,124,40}      % deep gold (marks on paper)
+\definecolor{MoonPale}{RGB}{225,232,245}     % faint moonlight stars
+\definecolor{NebulaViolet}{RGB}{112,92,160}  % soft nebula violet
+\definecolor{AUnavy}{RGB}{17,30,58}          % main text; card ground
+\definecolor{AUorange}{RGB}{198,108,32}      % warm amber accent
+\definecolor{AUgray}{RGB}{95,103,118}        % cool slate secondary
+\pagecolor{NightPaper}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=AUnavy, linkcolor=AUnavy,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% A four-pointed star ("sparkle") drawn inline; #1 = colour, #2 = scale.
+\newcommand{\StarFour}[2]{%
+  \tikz[baseline=-0.60ex,scale=#2]{\fill[#1]
+    (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+    .. controls (0.055,-0.055) .. (0,-0.30)
+    .. controls (-0.055,-0.055) .. (-0.30,0)
+    .. controls (-0.055,0.055) .. cycle;}}
+% Quiet section label (navy, tracked caps) led by a gold star; [AUorange]
+% marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{AUnavy} m}{%
+  \par\vspace{0.78em}%
+  {\raggedright\PosterSemibold\fontsize{22.6}{27.0}\selectfont\color{#1}%
+   \StarFour{GoldDeep}{0.92}%
+   \hspace{0.30em}\addfontfeatures{LetterSpace=5}\MakeUppercase{#2}\par}%
+  \vspace{0.10em}%
+  {\color{NebulaViolet!52}\rule{0.82\linewidth}{1.35pt}\par}%
+  \vspace{-0.04em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{24.1}{33.0}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.2}{26.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% Header vignette: crescent moon, ringed planet, comet, a small
+% constellation -- the poster's night sky in miniature.
+\newcommand{\StyleMotif}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    % crescent moon
+    \fill[GoldDeep!88] (0.62,1.10) circle (0.46);
+    \fill[NightPaper]  (0.80,1.22) circle (0.40);
+    % ringed planet (Saturn)
+    \fill[NebulaViolet!80] (2.30,0.62) circle (0.34);
+    \draw[GoldDeep,line width=2.6pt,rotate around={-18:(2.30,0.62)}]
+      (2.30,0.62) ellipse (0.62 and 0.16);
+    % comet streaking in
+    \draw[GoldDeep!62,line width=3.4pt,line cap=round]
+      (5.45,1.42) .. controls (4.85,1.30) and (4.30,1.12) .. (3.82,0.86);
+    \draw[GoldDeep!38,line width=2.0pt,line cap=round]
+      (5.30,1.66) .. controls (4.72,1.52) and (4.22,1.34) .. (3.90,1.10);
+    \fill[AUorange] (3.74,0.80) circle (0.14);
+    % a little constellation (Cassiopeia's W)
+    \draw[AUnavy!55,line width=1.3pt]
+      (0.28,0.18) -- (0.78,0.44) -- (1.26,0.16) -- (1.74,0.40) -- (2.22,0.10);
+    \foreach \x/\y in {0.28/0.18,0.78/0.44,1.26/0.16,1.74/0.40,2.22/0.10}{
+      \fill[AUnavy!80] (\x,\y) circle (0.055);}
+    % sparkles
+    \fill[GoldDeep,shift={(1.62,1.44)},scale=0.60]
+      (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+      .. controls (0.055,-0.055) .. (0,-0.30)
+      .. controls (-0.055,-0.055) .. (-0.30,0)
+      .. controls (-0.055,0.055) .. cycle;
+    \fill[NebulaViolet!70,shift={(4.62,0.42)},scale=0.44]
+      (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+      .. controls (0.055,-0.055) .. (0,-0.30)
+      .. controls (-0.055,-0.055) .. (-0.30,0)
+      .. controls (-0.055,0.055) .. cycle;
+  \end{tikzpicture}}
+% Full-page backdrop: indigo frame with a gold hairline, a starry night
+% ribbon across the top, a faint orbit system in the top-left corner,
+% constellation charts and gold star-dust along the bottom margin, and
+% single stars down both side margins.
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % faint orbit system radiating from the top-left corner, and
+    % planisphere arcs in the bottom-left one -- drawn FIRST so the
+    % frame, ribbon, and stars paint over them
+    \foreach \r in {6.4, 9.3, 12.2}{
+      \draw[NightSky!11,line width=2.0pt]
+        ($(current page.north west)+(0cm,-\r cm)$)
+        arc[start angle=-90,end angle=0,radius=\r cm];}
+    \fill[AUorange!60] ($(current page.north west)+(3.18cm,-8.74cm)$) circle (0.22);
+    \fill[NightSky!30] ($(current page.north west)+(11.05cm,-5.17cm)$) circle (0.13);
+    \foreach \r in {4.6, 6.3, 8.0}{
+      \draw[NightSky!10,line width=1.8pt]
+        ($(current page.south west)+(0cm,\r cm)$)
+        arc[start angle=90,end angle=0,radius=\r cm];}
+    % double frame: deep-space border + gold hairline
+    \draw[NightSky,line width=7pt]
+      ([xshift=1.08cm,yshift=-1.08cm]current page.north west)
+      rectangle
+      ([xshift=-1.08cm,yshift=1.08cm]current page.south east);
+    \draw[GoldDeep!80,line width=1.6pt]
+      ([xshift=1.62cm,yshift=-1.62cm]current page.north west)
+      rectangle
+      ([xshift=-1.62cm,yshift=1.62cm]current page.south east);
+    % the night ribbon: a strip of sky along the top, full of stars
+    \fill[NightSky]
+      ([xshift=1.08cm,yshift=-1.08cm]current page.north west)
+      rectangle
+      ([xshift=-1.08cm,yshift=-2.10cm]current page.north east);
+    % ribbon stars (dots)
+    \foreach \x/\y/\r in {%
+      4.6/1.46/0.050, 7.9/1.74/0.034, 11.4/1.38/0.060, 15.2/1.66/0.040,
+      19.5/1.50/0.052, 23.1/1.30/0.036, 27.4/1.72/0.056, 31.8/1.44/0.038,
+      36.2/1.60/0.050, 40.7/1.34/0.034, 45.3/1.70/0.058, 49.6/1.46/0.040,
+      54.2/1.32/0.052, 58.8/1.64/0.036, 63.1/1.42/0.056, 67.7/1.72/0.038,
+      72.3/1.36/0.050, 76.8/1.58/0.034, 81.2/1.44/0.058, 85.7/1.70/0.040,
+      90.1/1.34/0.052, 94.6/1.62/0.036, 99.0/1.46/0.056, 103.4/1.32/0.038,
+      107.8/1.68/0.050, 111.9/1.42/0.036}{
+      \fill[MoonPale] ($(current page.north west)+(\x cm,-\y cm)$) circle (\r cm);}
+    \foreach \x/\y/\r in {%
+      6.2/1.60/0.042, 13.5/1.52/0.036, 21.3/1.62/0.046, 29.6/1.34/0.036,
+      38.4/1.48/0.044, 47.5/1.36/0.036, 56.5/1.50/0.046, 65.4/1.32/0.036,
+      74.6/1.66/0.044, 83.4/1.38/0.036, 92.3/1.52/0.046, 101.2/1.60/0.036,
+      109.9/1.36/0.042}{
+      \fill[StarGold] ($(current page.north west)+(\x cm,-\y cm)$) circle (\r cm);}
+    % ribbon sparkles
+    \foreach \x/\y/\s/\c in {%
+      9.7/1.55/0.52/StarGold, 25.3/1.52/0.44/MoonPale, 42.9/1.56/0.55/StarGold,
+      60.9/1.52/0.46/MoonPale, 78.9/1.50/0.54/StarGold, 96.8/1.48/0.44/MoonPale,
+      113.9/1.55/0.52/StarGold}{
+      \fill[\c,shift={($(current page.north west)+(\x cm,-\y cm)$)},scale=\s]
+        (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+        .. controls (0.055,-0.055) .. (0,-0.30)
+        .. controls (-0.055,-0.055) .. (-0.30,0)
+        .. controls (-0.055,0.055) .. cycle;}
+    % a small crescent and a ringed planet living in the ribbon
+    \fill[StarGold] ($(current page.north west)+(2.72cm,-1.58cm)$) circle (0.27);
+    \fill[NightSky] ($(current page.north west)+(2.83cm,-1.51cm)$) circle (0.235);
+    % (drawn in a shifted local frame: "rotate around" cannot take a
+    % calc ($...$) coordinate as its centre -- the ring swings away)
+    \begin{scope}[shift={($(current page.north east)+(-2.75cm,-1.58cm)$)}]
+      \fill[StarGold!85] (0,0) circle (0.195);
+      \draw[StarGold,line width=1.5pt,rotate=-18] (0,0) ellipse (0.37 and 0.10);
+    \end{scope}
+    % star-dust running in the gap between the two border lines
+    \foreach \x in {7.5, 14.5, 21.5, 28.5, 35.5, 42.5, 49.5, 56.5, 63.5,
+                    70.5, 77.5, 84.5, 91.5, 98.5, 105.5, 112.5}{
+      \fill[GoldDeep!50] ($(current page.south west)+(\x cm,1.35cm)$) circle (0.038);}
+    \foreach \x in {11.0, 25.0, 39.0, 53.0, 67.0, 81.0, 95.0, 109.0}{
+      \fill[NightSky!35] ($(current page.south west)+(\x cm,1.35cm)$) circle (0.030);}
+    % constellations resting in the footer whitespace: the Big Dipper ...
+    \draw[NightSky!26,line width=1.4pt]
+      ($(current page.south west)+(33.0cm,2.42cm)$) --
+      ($(current page.south west)+(35.6cm,2.66cm)$) --
+      ($(current page.south west)+(38.2cm,2.52cm)$) --
+      ($(current page.south west)+(40.6cm,2.88cm)$) --
+      ($(current page.south west)+(43.4cm,3.34cm)$) --
+      ($(current page.south west)+(46.6cm,3.26cm)$) --
+      ($(current page.south west)+(47.8cm,2.50cm)$);
+    \foreach \x/\y in {33.0/2.42,35.6/2.66,38.2/2.52,40.6/2.88,43.4/3.34,46.6/3.26,47.8/2.50}{
+      \fill[NightSky!50] ($(current page.south west)+(\x cm,\y cm)$) circle (0.080);}
+    % ... and Cassiopeia, with a pinch of gold dust between them
+    \draw[NightSky!26,line width=1.4pt]
+      ($(current page.south west)+(63.0cm,2.50cm)$) --
+      ($(current page.south west)+(65.0cm,3.18cm)$) --
+      ($(current page.south west)+(67.0cm,2.62cm)$) --
+      ($(current page.south west)+(69.0cm,3.22cm)$) --
+      ($(current page.south west)+(71.0cm,2.44cm)$);
+    \foreach \x/\y in {63.0/2.50,65.0/3.18,67.0/2.62,69.0/3.22,71.0/2.44}{
+      \fill[NightSky!50] ($(current page.south west)+(\x cm,\y cm)$) circle (0.080);}
+    \foreach \x/\y/\r in {%
+      53.5/2.90/0.050, 57.0/2.55/0.038, 75.5/2.95/0.050, 79.0/2.58/0.038,
+      84.5/2.90/0.050}{
+      \fill[GoldDeep!55] ($(current page.south west)+(\x cm,\y cm)$) circle (\r cm);}
+    % single stars down the side margins
+    \foreach \y/\r/\c in {10.5/0.070/GoldDeep!60, 18.0/0.050/NightSky!32,
+      26.0/0.080/GoldDeep!55, 34.5/0.050/NightSky!32, 43.0/0.070/GoldDeep!60,
+      51.5/0.050/NightSky!32, 60.0/0.080/GoldDeep!55}{
+      \fill[\c] ($(current page.north west)+(2.28cm,-\y cm)$) circle (\r cm);
+      \fill[\c] ($(current page.north east)+(-2.28cm,-\y cm)$) circle (\r cm);}
+    \fill[GoldDeep!75,shift={($(current page.north west)+(2.28cm,-30.2cm)$)},scale=0.62]
+      (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+      .. controls (0.055,-0.055) .. (0,-0.30)
+      .. controls (-0.055,-0.055) .. (-0.30,0)
+      .. controls (-0.055,0.055) .. cycle;
+    \fill[GoldDeep!75,shift={($(current page.north east)+(-2.28cm,-47.2cm)$)},scale=0.62]
+      (0,0.30) .. controls (0.055,0.055) .. (0.30,0)
+      .. controls (0.055,-0.055) .. (0,-0.30)
+      .. controls (-0.055,-0.055) .. (-0.30,0)
+      .. controls (-0.055,0.055) .. cycle;
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+
+
+% Centred title, with the logo top-right. Equal-width side blocks (left
+% motif + right logo) make the centre block -- and so the title -- sit
+% exactly in the middle of the page.
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedright
+  \StyleMotif
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplaySerif\fontsize{90}{97}\selectfont \DisplayTitle%
+   \hspace{0.30em}\raisebox{0.55ex}{\StarFour{GoldDeep}{1.35}}\par}
+  \vspace{0.35em}
+  {\DisplaySerif\itshape\fontsize{38}{48}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.70em}
+  {\fontsize{28}{37}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.4cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.72em}
+{\centering\PosterSemibold\fontsize{38}{49}\selectfont\color{AUorange}\Contribution\par}
+\vspace{0.34em}
+{\color{AUorange}\rule{\textwidth}{2.5pt}}
+
+\vspace{0.58em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{47.8cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.4pt}%
+\fcolorbox{GoldDeep!70}{AUnavy}{\begin{minipage}{\dimexpr\textwidth-3em}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24}{30}\selectfont\color{StarGold}%
+   \StarFour{StarGold}{1.0}\hspace{0.28em}%
+   \addfontfeatures{LetterSpace=8}THEOREM\quad
+   {\addfontfeatures{LetterSpace=5}(\MakeUppercase{#1})}\par}
+  \vspace{0.5em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{AUnavy}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.36cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{AUgray!45}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=3.6cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

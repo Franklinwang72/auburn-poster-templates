@@ -1,0 +1,472 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%
+%  Calligraphy theme: xuan-paper warmth, a free ink stroke, restrained
+%  seal-red accents, and readable research-poster structure.
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\DocumentMetadata{lang=en-US, pdfstandard=ua-1, tagging=on}
+\documentclass[12pt]{article}
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\usepackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\usepackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- one sans family (Source Sans 3, bundled) + STIX math -------------
+\usepackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\PosterSerif{EBGaramond}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-SemiBold, ItalicFont=*-Italic,
+  Ligatures=TeX]
+\newfontfamily\PosterSerifTitle{EBGaramond}[Path=fonts/, Extension=.otf,
+  UprightFont=*-SemiBold, BoldFont=*-Bold, ItalicFont=*-Italic,
+  Ligatures=TeX]
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: xuan paper, ink, quiet seal red --------------------------
+\usepackage{xcolor}
+\definecolor{XuanPaper}{RGB}{250,247,237}
+\definecolor{XuanWarm}{RGB}{238,230,210}
+\definecolor{InkBlack}{RGB}{28,31,29}
+\definecolor{InkWash}{RGB}{54,59,55}
+\definecolor{Fiber}{RGB}{216,207,184}
+\definecolor{SealRed}{RGB}{185,47,31}
+\definecolor{Mist}{RGB}{232,224,206}
+\definecolor{AUnavy}{RGB}{28,31,29}
+\definecolor{AUorange}{RGB}{179,47,32}
+\definecolor{AUgray}{RGB}{91,96,90}
+\pagecolor{XuanPaper}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\usepackage{qrcode}
+\usepackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=AUnavy, linkcolor=AUnavy,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+\newcounter{postersection}
+\NewDocumentCommand{\PosterSection}{O{AUnavy} m}{%
+  \stepcounter{postersection}%
+  \par\vspace{0.66em}%
+  \noindent
+  \begin{minipage}[t]{0.088\linewidth}
+    {\PosterSemibold\fontsize{14}{17}\selectfont\color{SealRed}%
+      \ifnum\value{postersection}<10 0\fi\arabic{postersection}\par}
+    \vspace{0.12em}
+    {\color{SealRed!78}\rule{0.78\linewidth}{1.0pt}\par}
+  \end{minipage}%
+  \begin{minipage}[t]{0.895\linewidth}
+    {\PosterSerifTitle\fontsize{25.5}{30.5}\selectfont\color{#1}#2\par}
+    \vspace{0.03em}
+    {\color{Fiber!76}\rule{\linewidth}{0.55pt}\par}
+  \end{minipage}%
+  \par\vspace{0.04em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{22.1}{30.1}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{18.0}{24.4}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{15.4}{20.5}\selectfont}
+\newcommand{\XuanBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[XuanPaper] (current page.south west) rectangle (current page.north east);
+    \draw[InkBlack,line width=36pt,line cap=round,opacity=0.086]
+      ([xshift=9.2cm,yshift=-46.8cm]current page.north west)
+      .. controls ([xshift=28cm,yshift=-34cm]current page.north west)
+          and ([xshift=42cm,yshift=-39cm]current page.north west)
+      .. ([xshift=59cm,yshift=-31cm]current page.north west)
+      .. controls ([xshift=77cm,yshift=-22cm]current page.north west)
+          and ([xshift=96cm,yshift=-31cm]current page.north west)
+      .. ([xshift=113cm,yshift=-19.5cm]current page.north west);
+    \draw[InkBlack,line width=14pt,line cap=round,opacity=0.060]
+      ([xshift=11.5cm,yshift=-48.6cm]current page.north west)
+      .. controls ([xshift=31cm,yshift=-37cm]current page.north west)
+          and ([xshift=47cm,yshift=-40cm]current page.north west)
+      .. ([xshift=63cm,yshift=-33cm]current page.north west)
+      .. controls ([xshift=80cm,yshift=-26cm]current page.north west)
+          and ([xshift=96cm,yshift=-33cm]current page.north west)
+      .. ([xshift=111cm,yshift=-22cm]current page.north west);
+    \draw[XuanPaper,line width=5.8pt,line cap=round,opacity=0.52]
+      ([xshift=37cm,yshift=-38.8cm]current page.north west)
+      .. controls ([xshift=51cm,yshift=-39.4cm]current page.north west)
+          and ([xshift=72cm,yshift=-25.2cm]current page.north west)
+      .. ([xshift=91cm,yshift=-30.3cm]current page.north west);
+    \draw[XuanPaper,line width=2.6pt,line cap=round,opacity=0.46]
+      ([xshift=20cm,yshift=-42.2cm]current page.north west)
+      .. controls ([xshift=36cm,yshift=-36.5cm]current page.north west)
+          and ([xshift=54cm,yshift=-37.8cm]current page.north west)
+      .. ([xshift=69cm,yshift=-29.4cm]current page.north west);
+    \fill[InkWash!11,opacity=0.28]
+      ([xshift=0cm,yshift=-50cm]current page.north west)
+      .. controls ([xshift=18cm,yshift=-45cm]current page.north west)
+          and ([xshift=14cm,yshift=-20cm]current page.north west)
+      .. ([xshift=5.3cm,yshift=-9.7cm]current page.north west)
+      .. controls ([xshift=16cm,yshift=-21cm]current page.north west)
+          and ([xshift=22cm,yshift=-47cm]current page.north west)
+      .. ([xshift=6.0cm,yshift=-66cm]current page.north west) -- cycle;
+    \foreach \x/\y/\l/\a in {
+      7/11/17/3, 12/18/15/-6, 23/9/20/4, 31/63/24/-3,
+      42/15/18/-4, 49/55/20/5, 58/8/15/2, 64/64/22/-6,
+      73/18/18/4, 81/58/22/3, 89/12/16/-5, 96/66/19/4,
+      105/17/16/3, 112/53/13/-4, 18/42/18/2, 36/38/16/-5,
+      54/31/20/3, 75/40/18/-4, 98/34/22/5, 110/28/15/-2} {
+        \draw[Fiber,line width=0.20pt,opacity=0.32]
+          ([xshift=\x cm,yshift=-\y cm]current page.north west) -- ++(\a:\l cm);
+    }
+    \draw[Fiber!72,line width=0.85pt]
+      ([xshift=1.9cm,yshift=-1.9cm]current page.north west) rectangle
+      ([xshift=-1.9cm,yshift=1.9cm]current page.south east);
+    \draw[SealRed!72,line width=0.9pt]
+      ([xshift=6.2cm,yshift=-11.45cm]current page.north west) --
+      ([xshift=113.8cm,yshift=-11.45cm]current page.north west);
+  \end{tikzpicture}}
+
+% ============================  EDIT  ===================================
+\newcommand{\DisplayTitle}{Calabi--Yau Manifolds}
+\newcommand{\TechTitle}{What they are, why they exist, and why they matter}
+\newcommand{\PosterAuthors}{Franklin Wang}
+\newcommand{\PosterDept}{Department of Mathematics and Statistics, Auburn University}
+% The soul of the poster -- one sentence, read before everything else:
+\newcommand{\Contribution}{One cheap topological test --- $c_1 = 0$ --- buys the richest geometry of all: $\operatorname{Ric} = 0$, guaranteed.}
+\newcommand{\PosterURL}{https://github.com/Franklinwang72/auburn-university-latex-template}
+\newcommand{\PosterURLShort}{github.com/Franklinwang72}
+% The QR code target (here: the author's LinkedIn profile)
+\newcommand{\PosterQRURL}{https://www.linkedin.com/in/franklin-wang-a14b7b327}
+\newcommand{\PosterContact}{zzw0109@auburn.edu}
+% PDF metadata: use REAL Unicode dashes here -- TeX ligatures like "--"
+% are NOT applied inside PDF text strings and would show literally.
+\hypersetup{pdftitle={Calabi–Yau Manifolds — What They Are, Why They Exist, and Why They Matter},
+            pdfauthor={Franklin Wang}}
+% ==========================  end EDIT  =================================
+
+\begin{document}
+\XuanBackdrop
+
+% =========================  HEADER  ====================================
+\vspace*{0.1cm}
+\begin{minipage}[c]{0.19\textwidth}\ \end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\PosterSerifTitle\fontsize{82}{86}\selectfont \DisplayTitle\par}
+  \vspace{0.12em}
+  {\PosterMedium\fontsize{27}{34}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.30em}
+  {\fontsize{20}{25.5}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.19\textwidth}
+  \raggedleft
+  \includegraphics[height=5.55cm,
+    alt={Full-color Auburn University formal logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.62em}
+{\centering\PosterSerifTitle\fontsize{30}{38}\selectfont\color{InkBlack}
+  \Contribution\par}
+
+\vspace{0.60em}
+
+% =========================  BODY  ======================================
+% Fixed-height, stretchable columns: whitespace is distributed between
+% sections (\vfill) so all three columns end exactly at the footer.
+\newlength{\BodyH}\setlength{\BodyH}{49.85cm}
+\begin{minipage}[t][\BodyH][s]{0.295\textwidth}
+\PosterBody
+
+% ---------- LEFT: the prerequisites, built up for an undergraduate ----------
+\PosterSection{What Is a Manifold?}
+A \auterm{manifold} is a mathematician's word for a smooth shape --- of
+any dimension. Its one defining trick: up close it looks \auterm{flat},
+the way the ground looks flat from where you stand even though the
+Earth is round. The number of coordinates you need to pin down a point
+is the \auterm{dimension}, and the shapes here are \auterm{compact}:
+finite and edgeless, closed up like a sphere rather than sprawling like
+an open plain.
+\vfill
+\PosterSection{Complex Dimensions}
+Calabi--Yau manifolds run on \auterm{complex} coordinates. A complex
+number $x + iy$ is a single arrow in the plane --- length and
+direction bundled into one --- so one complex dimension already
+carries two real ones. An $n$-complex-dimensional shape is therefore
+$2n$-real-dimensional: a Calabi--Yau \auterm{threefold} $(n = 3)$ is a
+\auterm{six}-dimensional world.
+\vfill
+\PosterSection{Curvature: Do Triangles Behave?}
+How can you tell a surface is curved without stepping outside it? Draw
+a triangle. On a \auterm{sphere} its angles sum to \auterm{more} than
+$180^\circ$; on a \auterm{saddle}, to \auterm{less}; only on a
+\auterm{flat} sheet do they hit $180^\circ$ exactly. An ant that never
+leaves the surface could discover its world is round this way ---
+curvature is \auterm{intrinsic}, and it can change from point to point.
+\begin{center}
+\includegraphics[width=0.94\textwidth,
+  alt={Three small surfaces in a row: a blue sphere with a triangle of
+    three outward-bulging arcs, a flat gray sheet with a
+    straight-edged triangle, and a burnt-orange saddle surface with a
+    triangle whose sides pinch inward.}]{figures/curvature-trio.png}
+\par\vspace{0.15em}
+{\PosterCaption\color{AUgray}
+Sphere: more than $180^\circ$ \textperiodcentered\;
+flat sheet: exactly $180^\circ$ \textperiodcentered\;
+saddle: less than $180^\circ$.\par}
+\end{center}
+\vfill
+\PosterSection{Ricci Curvature}
+Past two dimensions, curvature splits into many independent pieces.
+The \auterm{Ricci curvature} is the piece that controls \auterm{volume}.
+Sprinkle a tiny ball of dust and let each speck drift along a straight
+line: on a sphere the ball shrinks, on a saddle it swells, and when
+$\operatorname{Ric} = 0$ it holds its volume exactly. Such a space is
+genuinely curved yet volume-balanced --- which is precisely Einstein's
+equation for a spacetime with no matter. \auterm{Ricci-flat spaces are
+gravity's vacuums.}
+
+\end{minipage}\hfill
+%
+\begin{minipage}[t][\BodyH][s]{0.35\textwidth}
+\PosterBody
+
+% ---------- CENTER: the definition, the theorem, the picture ----------
+\PosterSection{What Is a Calabi--Yau Manifold?}
+A \auterm{Calabi--Yau manifold} is a compact complex manifold with two
+features. \auterm{(1) K\"ahler:} it carries both a way to measure
+distance --- a metric --- and complex coordinates, fitting together as
+smoothly as possible. \auterm{(2) A holomorphic volume form} $\Omega$:
+a way to gauge complex volume, built from the coordinates, that
+vanishes \emph{nowhere} (in bundle language, a trivial canonical
+bundle $K_X \cong \mathcal{O}_X$). Feature (2) forces a purely
+\auterm{topological} quantity to vanish --- the \auterm{first Chern
+class} $c_1(X)$, a single whole-number invariant of the shape you can
+compute without measuring anything. Calabi asked whether that cheap
+test forces a Ricci-flat metric to exist.
+\par\vspace{0.3em}
+% A single dark ink block anchors the poster.
+\begingroup
+\setlength{\fboxsep}{0.62cm}\setlength{\fboxrule}{0.0pt}
+\noindent\fcolorbox{InkBlack}{InkBlack}{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}
+  {\PosterSemibold\fontsize{14.5}{18.5}\selectfont\color{SealRed}%
+   theorem\quad
+   {\PosterMedium\fontsize{13.6}{18}\selectfont\color{XuanWarm}Yau 1978 / the Calabi conjecture}\par}
+  \vspace{0.34em}
+  {\color{white}\fontsize{25.8}{36.2}\selectfont
+  Let $(X,\omega)$ be a compact K\"ahler manifold with
+  $c_1(X) = 0$ in $H^2(X,\mathbb{R})$. Then $X$ carries a
+  \textit{unique} Ricci-flat K\"ahler metric $\tilde\omega$ with
+  $[\tilde\omega] = [\omega]$:
+  % the punchline at display scale (size set OUTSIDE the equation)
+  {\fontsize{34}{40}\selectfont
+  \begin{equation*}
+    \operatorname{Ric}(\tilde\omega) \;=\; 0 .
+  \end{equation*}}
+  Every Calabi--Yau manifold admits Ricci-flat metrics ---
+  exactly one in each K\"ahler class.\par}
+\end{minipage}}
+\endgroup
+\vfill
+\auterm{How is it proved?}\ Fix an overall scale; every candidate
+metric is then $\omega + i\,\partial\bar\partial\varphi$ for a single
+function $\varphi$, and Ricci-flatness becomes one nonlinear PDE ---
+the \auterm{complex Monge--Amp\`ere equation}
+% size change OUTSIDE the environment: \fontsize inside math is a no-op
+{\fontsize{28}{33}\selectfont
+\begin{equation*}
+  \bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{\,n}
+  \;=\; e^{F}\,\omega^{n}
+\end{equation*}}
+--- whose unknown sits inside a determinant of its own second
+derivatives. Yau's a~priori estimates force a solution to exist.
+\vfill
+\begin{center}
+\PosterFigure{A three-quarter view of a complex-curve slice of the
+  Fermat quintic Calabi-Yau threefold: interlocking petal-like sheets
+  that flow from Auburn orange at the top through pale gray to deep
+  navy at the base, with a fivefold pinwheel symmetry and a glossy
+  finish.}{%
+  \includegraphics[width=0.51\textwidth]{figures/calabi-yau-quintic.png}}
+\par\vspace{0.14em}
+% caption constrained to the figure width so the two read as one block
+\begin{minipage}{0.62\textwidth}
+{\PosterCaption\color{AUgray}
+A Calabi--Yau threefold has six real dimensions --- too many to draw,
+but not too many to slice. Shown: the surface $z_1^5+z_2^5=1$, a
+complex curve inside the Fermat quintic
+$\,z_0^5+\dots+z_4^5=0\,$ in $\mathbb{P}^4$, projected to $3$-space;
+its $25$ patches carry the standard Hanson parametrization.\par}
+\end{minipage}
+\end{center}
+
+\end{minipage}\hfill
+%
+\begin{minipage}[t][\BodyH][s]{0.295\textwidth}
+\PosterBody
+
+% ---------- RIGHT: examples a lay reader can hold, then the payoff ----------
+\PosterSection{The Simplest One: A Donut}
+In one complex dimension the definition selects exactly one shape: the
+torus $\mathbb{C}/\Lambda$, the surface of a donut. Its volume form is
+$dz$, inherited from the plane, and its Ricci-flat metric is the flat
+geometry a sheet of paper keeps when rolled up in two directions ---
+everything Yau's theorem promises, visible by hand.
+\begin{center}
+\includegraphics[width=0.32\textwidth,
+  alt={A glossy slate-blue torus, the surface of a donut, with one
+    vertical circle around the tube and one horizontal circle around
+    the hole drawn in deep navy: the two directions in which the flat
+    sheet was rolled up.}]{figures/cy-torus.png}
+\par\vspace{0.1em}
+{\PosterCaption\color{AUgray}
+The torus: a flat sheet rolled up in two directions.\par}
+\end{center}
+\vfill
+\PosterSection{The Family Album}
+One dimension up sit the celebrated \auterm{K3 surfaces}; in dimension
+three, the \auterm{quintic}. A shape cut out by one degree-$d$
+equation in complex projective space $\mathbb{P}^{n+1}$ is
+Calabi--Yau exactly when $d = n+2$:
+\begin{center}
+\PosterSmall
+% tag the first row as TH cells (screen readers announce column headers)
+\tagpdfsetup{table/header-rows={1}}%
+\begin{tabular}{c l l}
+  \toprule
+  \auhead{dim} & \auhead{Calabi--Yau} & \auhead{why $K_X \cong \mathcal{O}_X$} \\
+  \midrule
+  $1$ & elliptic curve $\mathbb{C}/\Lambda$ & $dz$ descends \\
+  $2$ & K3 surface, e.g.\ $X_4 \subset \mathbb{P}^3$ & $4 = 2+2$ \\
+  $3$ & quintic $X_5 \subset \mathbb{P}^4$ & $5 = 3+2$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\vspace{0.2em}
+The quintic alone moves in a $101$-parameter family of Ricci-flat
+worlds.
+\vfill
+\PosterSection{Six Hidden Dimensions}
+String theory needs spacetime to have \auterm{ten} dimensions --- four
+we see, six curled up too small to notice. In 1985 Candelas, Horowitz,
+Strominger and Witten showed that when the hidden six form a
+Calabi--Yau threefold, the physics left in four dimensions keeps
+supersymmetry, with Yau's Ricci-flat metric as its vacuum. If string
+theory is right, a shape like the one at the centre of this poster
+sits at every point of space.
+\vfill
+\PosterSection{A Shape and Its Mirror}
+Calabi--Yau threefolds come in pairs: each $X$ has a \auterm{mirror}
+$X^{\vee}$ with its two ``shape numbers'' swapped --- one counts ways
+to resize the shape, the other ways to deform it. String theory cannot
+tell the pair apart, and in 1991 Candelas--de~la~Ossa--Green--Parkes
+used this to count rational curves on the quintic ($2875$ lines,
+$609{,}250$ conics) by an integral on the mirror.
+\vfill
+\PosterSection[AUorange]{Takeaway}
+{\PosterSerifTitle\fontsize{24.5}{33.5}\selectfont\raggedright\color{InkBlack}
+ \hyphenpenalty=10000\exhyphenpenalty=10000
+A Calabi--Yau manifold passes one topological test, $c_1 = 0$ ---
+and Yau's theorem rewards it with perfect geometry,
+$\operatorname{Ric} = 0$: the meeting point of analysis, algebra, and
+physics.\par}
+
+\end{minipage}
+
+\vspace{0.26cm}
+
+% =========================  FOOTER  ====================================
+\noindent\begin{minipage}{\textwidth}
+{\color{Fiber!85}\rule{\textwidth}{0.9pt}}
+\vspace{0.34em}
+
+\begin{minipage}[c]{0.15\textwidth}
+  {\PosterSemibold\fontsize{12.8}{16}\selectfont\color{SealRed}xuan edition\par}
+  {\fontsize{11.5}{14.8}\selectfont\color{AUgray}
+    ink geometry\\
+    auburn mark\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.68\textwidth}
+  \centering
+  {\fontsize{14.8}{19.2}\selectfont\color{AUgray}
+  \textbf{References:}\;
+  E.~Calabi, Proc.\ ICM 1954 \textperiodcentered\;
+  S.-T.~Yau, Comm.\ Pure Appl.\ Math.\ 31 (1978) \textperiodcentered\;
+  P.~Candelas, X.~de~la~Ossa, P.~Green, L.~Parkes, Nucl.\ Phys.\ B 359 (1991) \textperiodcentered\;
+  D.~Huybrechts, \emph{Complex Geometry}, Springer, 2005.\par}
+  \vspace{0.08em}
+  {\fontsize{12.8}{16.6}\selectfont\color{AUgray}
+  \textbf{Contact:}\; \href{mailto:\PosterContact}{\PosterContact}\quad
+  \textbf{Template:}\; \href{\PosterURL}{\PosterURLShort}
+  \par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.11\textwidth}
+  \raggedleft
+  \begin{minipage}{3.55cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=2.55cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSerifTitle\fontsize{13}{16}\selectfont\color{SealRed}connect\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}
+
+\end{document}

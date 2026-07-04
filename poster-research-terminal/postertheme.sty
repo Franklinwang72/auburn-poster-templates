@@ -1,0 +1,370 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Terminal -- the computer itself. The whole poster is ONE
+%  terminal window floating on a dark desktop: a chrome title bar with
+%  the three window lights, a thin scrollbar on the right, and a quiet
+%  status bar along the bottom. Body text is what the terminal prints;
+%  every section head is a shell prompt (a green chevron); the title
+%  ends in a block cursor, still blinking; and the main theorem is the
+%  FOCUSED PANE -- the one pane with the green focus border. Display
+%  type is Fira Mono, body is Fira Sans (Mozilla's developer family).
+%
+%  Palette: charcoal desktop, soft-white terminal text, ONE phosphor
+%  green accent, gray chrome. Mixed-case heads, no frames beyond the
+%  window itself, no ornaments.
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%  (The QR code sits on a small white card: inverted QR codes scan
+%  poorly, so the modules stay dark-on-light even on this dark page.)
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-terminal poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Fira Sans) + Fira Mono display + STIX math ------------
+\RequirePackage{fontspec}
+\setmainfont{FiraSans}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-Italic,   BoldItalicFont=*-BoldItalic]
+\newfontfamily\PosterSemibold{FiraSans}[Path=fonts/, Extension=.otf,
+  UprightFont=*-SemiBold, Ligatures=TeX]
+\newfontfamily\PosterMedium{FiraSans}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplayMono{FiraMono}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Bold, ItalicFont=*-Oblique, Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: charcoal desktop, terminal text, phosphor green -----------
+\RequirePackage{xcolor}
+\definecolor{DeskDark}{RGB}{13,15,18}      % the desktop behind the window
+\definecolor{TermBG}{RGB}{24,28,33}        % the terminal window
+\definecolor{ChromeBar}{RGB}{33,38,44}     % title bar, status bar, track
+\definecolor{ChromeLine}{RGB}{58,64,72}    % window border, hairlines
+\definecolor{PanelGray}{RGB}{36,42,50}     % the focused pane (theorem)
+\definecolor{TermText}{RGB}{222,228,234}   % what the terminal prints
+\definecolor{LightRed}{RGB}{255,95,86}     % window lights
+\definecolor{LightYellow}{RGB}{255,189,46}
+\definecolor{LightGreen}{RGB}{39,201,63}
+\definecolor{AUnavy}{RGB}{13,15,18}        % (desk dark again; QR modules)
+\definecolor{AUorange}{RGB}{126,206,144}   % phosphor green, the accent slot
+\definecolor{AUgray}{RGB}{140,150,160}     % gray secondary
+\colorlet{TermGreen}{AUorange}
+\pagecolor{DeskDark}
+\color{TermText}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links (phosphor green: visible on the dark window) ---------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=TermGreen, linkcolor=TermGreen,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% The shell prompt chevron; #1 = colour.
+\newcommand{\PromptMark}[1]{%
+  \tikz[baseline=-0.52ex]{%
+    \draw[#1,line width=2.4pt,line cap=round,line join=round]
+      (0,0.165) -- (0.165,0) -- (0,-0.165);}}
+% A block cursor, still blinking; #1 = colour, #2 = height (cm).
+\newcommand{\BlockCursor}[2]{%
+  \tikz[baseline=0pt]{\fill[#1] (0,0) rectangle (0.42*#2,#2);}}
+% Quiet mixed-case section head: prompt, terminal-text title, hairline.
+% [AUorange] (phosphor green) marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{TermText} m}{%
+  \par\vspace{0.80em}%
+  {\raggedright\PosterSemibold\fontsize{23.5}{28.2}\selectfont\color{#1}%
+   \PromptMark{TermGreen}\hspace{0.38em}#2\par}%
+  \vspace{0.14em}%
+  {\color{ChromeLine!85}\rule{0.34\linewidth}{1.0pt}\par}%
+  \vspace{-0.02em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{23.9}{31.9}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.0}{25.6}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% The resting shell, header left: a large prompt and its idle cursor.
+\newcommand{\StyleMotif}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \draw[TermGreen,line width=7pt,line cap=round,line join=round]
+      (0,1.34) -- (0.95,0.67) -- (0,0);
+    \fill[AUgray!55] (1.55,0.02) rectangle (2.45,1.36);
+  \end{tikzpicture}}
+% Full-page backdrop: ONE terminal window on the dark desktop -- the
+% rounded window, its title bar with the three lights, a hairline, a
+% thin scrollbar with its thumb, and a quiet status bar with a few
+% mode blocks. Nothing else.
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % the window
+    \fill[TermBG,rounded corners=0.5cm]
+      ($(current page.north west)+(0.9cm,-0.9cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-71.1cm)$);
+    \draw[ChromeLine,line width=1.1pt,rounded corners=0.5cm]
+      ($(current page.north west)+(0.9cm,-0.9cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-71.1cm)$);
+    % the title bar (rounded on top, squared off below)
+    \fill[ChromeBar,rounded corners=0.5cm]
+      ($(current page.north west)+(0.9cm,-0.9cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-2.3cm)$);
+    \fill[ChromeBar]
+      ($(current page.north west)+(0.9cm,-1.5cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-2.3cm)$);
+    \draw[ChromeLine,line width=0.9pt]
+      ($(current page.north west)+(0.9cm,-2.3cm)$) --
+      ($(current page.north west)+(119.1cm,-2.3cm)$);
+    % the three window lights
+    \fill[LightRed]    ($(current page.north west)+(2.5cm,-1.6cm)$) circle (0.28);
+    \fill[LightYellow] ($(current page.north west)+(3.5cm,-1.6cm)$) circle (0.28);
+    \fill[LightGreen]  ($(current page.north west)+(4.5cm,-1.6cm)$) circle (0.28);
+    % the scrollbar and its thumb
+    \fill[ChromeBar,rounded corners=0.22cm]
+      ($(current page.north west)+(118.42cm,-3.0cm)$)
+      rectangle ($(current page.north west)+(118.88cm,-69.4cm)$);
+    \fill[AUgray!50,rounded corners=0.22cm]
+      ($(current page.north west)+(118.42cm,-3.6cm)$)
+      rectangle ($(current page.north west)+(118.88cm,-10.6cm)$);
+    % the status bar (squared on top, rounded below)
+    \fill[ChromeBar,rounded corners=0.5cm]
+      ($(current page.north west)+(0.9cm,-70.0cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-71.1cm)$);
+    \fill[ChromeBar]
+      ($(current page.north west)+(0.9cm,-70.0cm)$)
+      rectangle ($(current page.north west)+(119.1cm,-70.55cm)$);
+    \draw[ChromeLine,line width=0.9pt]
+      ($(current page.north west)+(0.9cm,-70.0cm)$) --
+      ($(current page.north west)+(119.1cm,-70.0cm)$);
+    % mode blocks in the status bar
+    \fill[TermGreen,rounded corners=2.2pt]
+      ($(current page.north west)+(2.1cm,-70.28cm)$)
+      rectangle ($(current page.north west)+(3.9cm,-70.82cm)$);
+    \fill[AUgray!45,rounded corners=2.2pt]
+      ($(current page.north west)+(4.3cm,-70.28cm)$)
+      rectangle ($(current page.north west)+(5.6cm,-70.82cm)$);
+    \fill[AUgray!30,rounded corners=2.2pt]
+      ($(current page.north west)+(6.0cm,-70.28cm)$)
+      rectangle ($(current page.north west)+(6.9cm,-70.82cm)$);
+    \fill[AUgray!30,rounded corners=2.2pt]
+      ($(current page.north west)+(114.6cm,-70.28cm)$)
+      rectangle ($(current page.north west)+(117.9cm,-70.82cm)$);
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+\vspace*{0.45cm}
+
+
+% The terminal's banner: the title ends in a block cursor, still
+% blinking; the resting prompt sits at the left; the logo top-right.
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedright\hspace{1.2cm}\StyleMotif
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplayMono\fontsize{72}{80}\selectfont \DisplayTitle\,%
+   \raisebox{0.06em}{\BlockCursor{TermGreen}{1.58}}\par}
+  \vspace{0.40em}
+  {\DisplayMono\itshape\fontsize{29}{38}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.55em}
+  {\fontsize{27}{35}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.2cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.55em}
+{\centering\PosterSemibold\fontsize{37}{48}\selectfont\color{AUorange}\Contribution\par}
+\vspace{0.34em}
+{\color{TermGreen!45}\rule{\textwidth}{1.6pt}}
+
+\vspace{0.58em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{48.5cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\color{TermGreen}\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.6pt}\setlength{\fboxsep}{0pt}%
+\fcolorbox{TermGreen!65}{PanelGray}{\begin{minipage}{\dimexpr\textwidth-2\fboxrule}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24.5}{30}\selectfont\color{TermGreen}%
+   \PromptMark{TermGreen}\hspace{0.38em}%
+   Theorem\quad{\itshape(#1)}\par}
+  \vspace{0.45em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{TermText}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.36cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{AUgray!40}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    % QR on a small white card: dark modules on light scan reliably;
+    % an inverted (light-on-dark) QR often does not. The group resets
+    % hyperref's urlcolor, which the qrcode package prints with.
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\setlength{\fboxsep}{8pt}\colorbox{white}{\begingroup
+                    \hypersetup{urlcolor=AUnavy}%
+                    \qrcode[height=3.15cm]{\PosterQRURL}\endgroup}}\par
+    \vspace{5pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

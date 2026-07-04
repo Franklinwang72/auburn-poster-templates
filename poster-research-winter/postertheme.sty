@@ -1,0 +1,290 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%
+%  One clear mathematical idea in Auburn colours: white ground, navy
+%  text, ONE restrained orange accent. 120 x 72 cm landscape, three
+%  columns with a centre-stage hierarchy -- the main theorem sits in
+%  the ONLY dark panel (navy card, white text, orange label) above one
+%  strong visual (the iconic Calabi-Yau quintic surface, rendered in
+%  the poster's own navy-to-orange palette).
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-winter poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- one sans family (Source Sans 3, bundled) + STIX math -------------
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: winter paper, midnight text, ice-blue accent --------------
+\RequirePackage{xcolor}
+\definecolor{SeasonPaper}{RGB}{247,251,253}
+\definecolor{SeasonSoft}{RGB}{226,238,246}
+\definecolor{SeasonIce}{RGB}{122,178,205}
+\definecolor{SeasonSilver}{RGB}{181,199,211}
+\definecolor{AUnavy}{RGB}{18,42,72}      % main text; card ground
+\definecolor{AUorange}{RGB}{58,132,171}  % ice accent
+\definecolor{AUgray}{RGB}{95,108,120}    % secondary text
+\pagecolor{SeasonPaper}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=AUnavy, linkcolor=AUnavy,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% Quiet section label (navy, tracked caps); [AUorange] marks the ONE
+% main-result label.
+\NewDocumentCommand{\PosterSection}{O{AUnavy} m}{%
+  \par\vspace{1.0em}%
+  {\centering\PosterSemibold\fontsize{27}{33}\selectfont\color{#1}%
+   % LetterSpace pads the RIGHT of the last letter; a matching left kern
+   % keeps the tracked caps optically centred.
+   \hspace*{0.08em}\addfontfeatures{LetterSpace=8}\MakeUppercase{#2}\par}%
+  \vspace{0.3em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{25}{34.5}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{21}{29}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{19}{26}\selectfont}
+\newcommand{\SeasonMotif}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \begin{scope}[shift={(1.35,1.02)}]
+      \foreach \a in {0,60,...,300}{
+        \draw[SeasonIce,line width=2.0pt,line cap=round] (0,0) -- (\a:0.98);
+        \draw[SeasonSilver,line width=1.3pt,line cap=round] (\a:0.62) -- ++(\a+38:0.22);
+        \draw[SeasonSilver,line width=1.3pt,line cap=round] (\a:0.62) -- ++(\a-38:0.22);
+      }
+      \fill[SeasonPaper] (0,0) circle (0.10);
+    \end{scope}
+    \draw[SeasonSoft,line width=5pt,line cap=round]
+      (2.25,0.35) .. controls (3.10,0.80) and (4.15,0.12) .. (5.35,0.42);
+    \foreach \x/\y/\r in {3.00/1.10/0.12,4.12/0.85/0.09,4.82/1.20/0.11}{
+      \fill[SeasonIce!65] (\x,\y) circle (\r);
+    }
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+
+
+% Centred title, with the logo top-right. Equal-width side blocks (left
+% spacer + right logo) make the centre block -- and so the title -- sit
+% exactly in the middle of the page.
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedright
+  \SeasonMotif
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\bfseries\fontsize{84}{94}\selectfont \DisplayTitle\par}
+  \vspace{0.35em}
+  {\PosterMedium\fontsize{36}{46}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.75em}
+  {\fontsize{28}{37}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.4cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{1.1em}
+{\centering\PosterSemibold\fontsize{38}{49}\selectfont\color{AUorange}\Contribution\par}
+\vspace{0.55em}
+{\color{AUorange}\rule{\textwidth}{2.5pt}}
+
+\vspace{0.9em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{49.2cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+\colorbox{AUnavy}{\begin{minipage}{\dimexpr\textwidth-3em}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24}{30}\selectfont\color{AUorange}%
+   \addfontfeatures{LetterSpace=8}THEOREM\quad
+   {\addfontfeatures{LetterSpace=5}(\MakeUppercase{#1})}\par}
+  \vspace{0.5em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{AUnavy}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.65cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{AUgray!45}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=3.6cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput
