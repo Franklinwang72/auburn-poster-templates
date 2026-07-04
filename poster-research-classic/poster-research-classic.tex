@@ -1,0 +1,320 @@
+% ======================================================================
+%  Auburn University Poster Template -- accessible (WCAG 2.1 AA aligned)
+%
+%  COMPILE WITH LuaLaTeX (required -- the bundled OpenType fonts load
+%  through fontspec; pdfLaTeX/XeLaTeX will not work):
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk poster-research-classic.tex   (or:  make)
+%
+%  The demo content (sheaves & sheafification) shows one filled-in poster;
+%  replace the blocks with your own. Everything you normally touch is in
+%  the two sections marked "EDIT".
+%
+%  ACCESSIBILITY. A beamer poster CANNOT be a fully tagged PDF/UA-1
+%  document -- the beamer class rejects the LaTeX tagging engine's
+%  \DocumentMetadata. So this template is made accessible BY DESIGN, the
+%  WCAG measures a poster can meet:
+%    * WCAG-AA colour contrast -- Auburn navy / black text on light grounds
+%      are all >= 12:1; orange is used ONLY as a large decorative accent
+%      (3.4:1), never for body text;
+%    * legible, self-contained fonts -- Source Sans 3 (text + headings) and
+%      Atkinson Hyperlegible Mono (code), with STIX Two Math, matching the
+%      Auburn University LaTeX Template;
+%    * meaning is never carried by colour alone (weight + words);
+%    * a document title and language are written to the PDF metadata.
+% ======================================================================
+\documentclass[final]{beamer}
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\usepackage{iftex}
+\RequireLuaTeX
+
+% ====================
+% Packages
+% ====================
+% Poster size (width/height in CENTIMETRES; scale multiplies every font):
+%   120 x 72 cm  -- this file (wide 5:3 landscape)
+%   A0 landscape -- width=118.9, height=84.1
+%   48 x 36 in   -- width=121.92, height=91.44
+% Check your conference's required size, and bump scale (e.g. 1.2) if you
+% enlarge the poster so the text keeps its proportion.
+\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+\usetheme{AUposter}
+\usecolortheme{AU}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{mathtools}            % amsmath + extras
+\usepackage{unicode-math}        % STIX Two Math -- matches the thesis template
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup           % \ker, \operatorname, ... in STIX, not Latin Modern
+\usepackage{microtype}
+\usepackage{qrcode}
+
+% ====================
+% Lengths  (3 columns: (N+1)*sep + N*col = paperwidth).
+% For a 2-column poster use e.g. sep=0.03, col=0.455; for 4 columns
+% sep=0.02, col=0.225 -- and add/remove \begin{column} blocks below.
+% ====================
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.3\paperwidth}
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+% A run-in term label in Auburn navy semibold, e.g. \auterm{Definition.}
+% (colour is paired with weight, so it is never the only cue).
+\newcommand{\auterm}[1]{{\AUsemibold\color{AUblue}#1}}
+% A table header cell in Semibold (matches the thesis template's \auhead).
+\newcommand{\auhead}[1]{{\AUsemibold #1}}
+
+% ========================  EDIT (identity)  ===========================
+% Title, author, PDF metadata, footer, logo -- everything identifying
+% YOUR poster lives between here and the "end EDIT (identity)" line.
+% The second EDIT section (the poster content) starts at \begin{document}.
+% ======================================================================
+
+% PDF metadata: a document title + language (WCAG 2.4.2 / 3.1.1). beamer
+% already loads hyperref, so we only configure it. Keep pdftitle in sync
+% with \title below (it appears in three places: here, and twice inside
+% \texorpdfstring -- the display text and the plain PDF-string fallback).
+% Links are printed in Auburn navy so they are distinguishable from text.
+\hypersetup{
+  pdftitle  = {Calabi–Yau Manifolds — What They Are, Why They Exist, and Why They Matter},
+  pdfauthor = {Franklin Wang},
+  pdflang   = {en-US},
+  pdfdisplaydoctitle = true,
+  colorlinks = true,
+  urlcolor   = AUblue,
+  linkcolor  = AUblue,
+  citecolor  = AUblue,
+}
+% Title -- the optional second line is a subtitle. No subtitle? Replace
+% the whole \title with the one-liner:
+%   \title{Calabi--Yau Manifolds}
+\title{\texorpdfstring{Calabi--Yau Manifolds\\[-0.3ex]
+  {\mdseries\AUmedium\fontsize{30}{38}\selectfont What they are, why they exist, and why they matter}}%
+  {Calabi–Yau Manifolds}}
+
+% For several authors:  \author{A. Author \and B. Author \and C. Author}
+\author{Franklin Wang}
+
+\institute{Department of Mathematics and Statistics \enspace$\cdot$\enspace Auburn University}
+
+% Footer: left / centre / right. Comment the whole command out to remove
+% the footer band entirely.
+% (Footer links sit on the navy band, so they are forced white + underlined;
+% colorlinks above would otherwise paint them navy-on-navy.)
+\footercontent{
+  \href{https://github.com/Franklinwang72/auburn-university-latex-template}{\textcolor{white}{\underline{Auburn University LaTeX Template}}} \hfill
+  Graduate Research Symposium 2026 \hfill
+  \href{mailto:zzw0109@auburn.edu}{\textcolor{white}{\underline{zzw0109@auburn.edu}}}}
+
+% Auburn logo in the header; use \logoleft for the other side, or comment
+% out for no logo. Logos: https://ocm.auburn.edu/brand-center/logos/
+\logoright{\includegraphics[height=7cm]{AUlogo.png}}
+
+% =======================  end EDIT (identity)  ========================
+
+% ========================  EDIT (content)  ============================
+% The poster body: three columns of blocks. Replace the demo blocks with
+% your own; block / alertblock / exampleblock give white / light-orange /
+% light-blue panels. (The poster SIZE is set at the top, on the
+% beamerposter line.)
+% ======================================================================
+\begin{document}
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+% ===== COLUMN 1 =====
+\begin{column}{\colwidth}
+
+  \begin{block}{Manifolds and complex dimensions}
+
+    A \auterm{manifold} is a mathematician's word for a smooth shape --- of any
+    dimension. Its one defining trick: up close it looks \textbf{flat}, the way
+    the ground looks flat from where you stand even though the Earth is round.
+    The number of coordinates needed to pin down a point is the
+    \textbf{dimension}; the shapes here are \textbf{compact} --- finite and
+    edgeless, closed up like a sphere rather than sprawling like an open plain.
+
+    \auterm{Complex coordinates.}\ Calabi--Yau manifolds run on \emph{complex}
+    coordinates. A complex number $x+iy$ is a single arrow in the plane ---
+    length and direction bundled into one --- so one complex dimension already
+    carries two real ones. An $n$-complex-dimensional shape is
+    $2n$-real-dimensional: a Calabi--Yau \textbf{threefold} $(n=3)$ is a
+    \textbf{six}-dimensional world.
+
+  \end{block}
+
+  \begin{block}{Curvature: do triangles behave?}
+
+    How can you tell a surface is curved without stepping outside it? Draw a
+    triangle. On a \textbf{sphere} its angles sum to \textbf{more} than
+    $180^\circ$; on a \textbf{saddle}, to \textbf{less}; only on a
+    \textbf{flat} sheet do they hit $180^\circ$ exactly. An ant that never
+    leaves the surface could discover its world is round this way ---
+    curvature is \textbf{intrinsic}, and it can change from point to point.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.92\colwidth]{figures/curvature-trio.png}
+      \caption{Sphere: more than $180^\circ$ \,$\cdot$\, flat sheet: exactly
+        $180^\circ$ \,$\cdot$\, saddle: less than $180^\circ$.}
+    \end{figure}
+
+  \end{block}
+
+  \begin{block}{Ricci curvature}
+
+    Past two dimensions, curvature splits into many independent pieces. The
+    \auterm{Ricci curvature} is the piece that controls \textbf{volume}.
+    Sprinkle a tiny ball of dust and let each speck drift along a straight
+    line: on a sphere the ball shrinks, on a saddle it swells, and when
+    $\operatorname{Ric}=0$ it holds its volume exactly. Such a space is
+    genuinely curved yet volume-balanced --- which is precisely Einstein's
+    equation for a spacetime with no matter. \textbf{Ricci-flat spaces are
+    gravity's vacuums.}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+% ===== COLUMN 2 =====
+\begin{column}{\colwidth}
+
+  \begin{block}{What is a Calabi--Yau manifold?}
+
+    A \auterm{Calabi--Yau manifold} is a compact complex manifold with two
+    features. \auterm{(1) K\"ahler:}\ it carries both a way to measure
+    distance --- a metric --- and complex coordinates, fitting together as
+    smoothly as possible. \auterm{(2) A holomorphic volume form} $\Omega$:\
+    a way to gauge complex volume, built from the coordinates, that vanishes
+    \emph{nowhere} (in bundle language, a trivial canonical bundle
+    $K_X \cong \mathcal{O}_X$). Feature (2) forces a purely
+    \textbf{topological} quantity to vanish --- the \auterm{first Chern class}
+    $c_1(X)$, a single whole-number invariant of the shape you can compute
+    without measuring anything. Calabi asked whether that cheap test forces a
+    Ricci-flat metric to exist.
+
+  \end{block}
+
+  \begin{alertblock}{Theorem (Yau 1978 --- the Calabi conjecture)}
+
+    Let $(X,\omega)$ be a compact K\"ahler manifold with $c_1(X)=0$ in
+    $H^2(X,\mathbb{R})$. Then $X$ carries a \emph{unique} Ricci-flat
+    K\"ahler metric $\tilde\omega$ with $[\tilde\omega]=[\omega]$:
+    \[
+      \operatorname{Ric}(\tilde\omega) \;=\; 0 .
+    \]
+    Every Calabi--Yau manifold admits Ricci-flat metrics --- exactly one in
+    each K\"ahler class.
+
+    \auterm{How is it proved?}\ Fix an overall scale; every candidate metric
+    is then $\omega + i\,\partial\bar\partial\varphi$ for a single function
+    $\varphi$, and Ricci-flatness becomes one nonlinear PDE --- the
+    \emph{complex Monge--Amp\`ere equation}
+    \[
+      \bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{\,n}
+      \;=\; e^{F}\,\omega^{n}
+    \]
+    --- whose unknown sits inside a determinant of its own second
+    derivatives. Yau's a~priori estimates force a solution to exist.
+
+  \end{alertblock}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.57\colwidth]{figures/calabi-yau-quintic.png}
+    \caption{A Calabi--Yau threefold has six real dimensions --- too many to
+      draw, but not too many to slice. Shown: the surface $z_1^5+z_2^5=1$, a
+      complex curve inside the Fermat quintic
+      $z_0^5+\dots+z_4^5=0$ in $\mathbb{P}^4$, projected to $3$-space.}
+  \end{figure}
+
+\end{column}
+
+\separatorcolumn
+
+% ===== COLUMN 3 =====
+\begin{column}{\colwidth}
+
+  \begin{block}{The simplest one: a donut}
+
+    In one complex dimension the definition selects exactly one shape: the
+    torus $\mathbb{C}/\Lambda$, the surface of a donut. Its volume form is
+    $dz$, inherited from the plane, and its Ricci-flat metric is the flat
+    geometry a sheet of paper keeps when rolled up in two directions.
+
+    \begin{center}
+      \includegraphics[width=0.22\colwidth]{figures/cy-torus.png}
+    \end{center}
+
+  \end{block}
+
+  \begin{block}{The family album}
+
+    One dimension up sit the celebrated \auterm{K3 surfaces}; in dimension
+    three, the \auterm{quintic}: one degree-$d$ equation in complex
+    projective space $\mathbb{P}^{n+1}$ cuts out a Calabi--Yau exactly when
+    $d = n+2$.
+
+    \begin{table}
+      \centering
+      {\fontsize{18.5}{23.5}\selectfont
+      \renewcommand{\arraystretch}{1.12}
+      \begin{tabular}{c l l}
+        \toprule
+        \auhead{dim} & \auhead{Calabi--Yau} & \auhead{why $K_X \cong \mathcal{O}_X$} \\
+        \midrule
+        $1$ & elliptic curve $\mathbb{C}/\Lambda$ & $dz$ descends \\
+        $2$ & K3 surface, e.g.\ $X_4 \subset \mathbb{P}^3$ & $4 = 2+2$ \\
+        $3$ & quintic $X_5 \subset \mathbb{P}^4$ & $5 = 3+2$ \\
+        \bottomrule
+      \end{tabular}
+      }
+    \end{table}
+
+  \end{block}
+
+  \begin{exampleblock}{Why physicists care}
+
+    String theory needs spacetime to have \textbf{ten} dimensions --- four we
+    see, six curled up too small to notice. In 1985 Candelas, Horowitz,
+    Strominger and Witten showed that when the hidden six form a Calabi--Yau
+    threefold, the four-dimensional physics that remains keeps supersymmetry.
+
+    \auterm{A shape and its mirror.}\ Calabi--Yau threefolds come in pairs:
+    each $X$ has a \emph{mirror} $X^{\vee}$ with its two ``shape numbers''
+    swapped, yet string theory cannot tell the pair apart. In 1991
+    Candelas--de~la~Ossa--Green--Parkes used this to count rational curves
+    on the quintic ($2875$ lines, \dots) by an integral on the mirror.
+
+  \end{exampleblock}
+
+  \begin{block}{References}
+
+    \begin{minipage}[c]{0.74\textwidth}
+      \nocite{*}
+      {\fontsize{14.8}{18.4}\selectfont\bibliographystyle{plain}\bibliography{poster}}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.20\textwidth}
+      \centering
+      % QR code to the full notes / paper (drawn in navy on white, scannable)
+      {\color{AUblue}\qrcode[height=3.4cm]{https://www.linkedin.com/in/franklin-wang-a14b7b327}}\par
+      \vspace{0.5ex}
+      {\AUsemibold\fontsize{14.8}{18.4}\selectfont Connect on LinkedIn}
+    \end{minipage}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+% ======================  end EDIT (content)  ==========================
+\end{frame}
+\end{document}

@@ -1,0 +1,387 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Ripple -- water research, clean and bright. The poster is a
+%  still water surface seen from above. One drop falls just over the
+%  title, and a single monumental system of concentric ripples spreads
+%  from behind it across the entire page -- rings that widen, thin,
+%  and fade as they travel. Smaller rings mark other drops landing in
+%  the column gutters and margins; a cluster of lily pads with one
+%  coral lotus rests in the top-left corner; a coral koi crosses the
+%  lane beneath the columns. The one dark panel -- the main theorem --
+%  is the still, deep pool at the centre: deep water, white text, a
+%  trio of bubbles by the label.
+%
+%  Palette: bright white-aqua surface, blue-slate ink, deep teal heads,
+%  ONE coral accent, fresh leaf green for the pads. Mixed-case heads,
+%  no frames, no ornaments.
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-water poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Source Sans 3) + Pagella display + STIX math ----------
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplaySerif{texgyrepagella}[Path=fonts/, Extension=.otf,
+  UprightFont=*-regular, BoldFont=*-bold, ItalicFont=*-italic,
+  Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: rain sky, deepening water, teal and one coral accent ------
+\RequirePackage{xcolor}
+\definecolor{PoolWhite}{RGB}{250,252,253}  % the page: bright still water
+\definecolor{WaveBlue}{RGB}{118,166,184}   % small ripples, bubbles, rules
+\definecolor{DeepWater}{RGB}{12,68,86}     % the theorem card; the deep pool
+\definecolor{PaleAqua}{RGB}{156,216,228}   % label on the deep-water card
+\definecolor{DeepTeal}{RGB}{10,88,108}     % section heads, title, rings
+\definecolor{LeafGreen}{RGB}{106,158,100}  % lily pads
+\definecolor{AUnavy}{RGB}{30,44,52}        % blue-slate ink (main text)
+\definecolor{AUorange}{RGB}{186,72,36}     % ONE coral accent
+\definecolor{AUgray}{RGB}{82,98,108}       % blue-gray secondary
+\pagecolor{PoolWhite}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=DeepTeal, linkcolor=DeepTeal,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% A water drop with a small highlight; #1 = colour.
+\newcommand{\DropMark}[1]{%
+  \tikz[baseline=-0.55ex]{%
+    \fill[#1] (0,0.30)
+      .. controls (0.15,0.08) and (0.185,0.00) .. (0.185,-0.09)
+      arc[start angle=0,end angle=-180,radius=0.185]
+      .. controls (-0.185,0.00) and (-0.15,0.08) .. (0,0.30) -- cycle;
+    \fill[PoolWhite,opacity=0.75] (-0.062,-0.11) circle (0.048);}}
+% A trio of rising bubbles for the deep-water card label; #1 = colour.
+\newcommand{\BubbleTrio}[1]{%
+  \tikz[baseline=-0.55ex]{%
+    \draw[#1,line width=1.2pt] (0,-0.04) circle (0.115);
+    \draw[#1,line width=1.1pt] (0.235,0.10) circle (0.072);
+    \draw[#1,line width=1.0pt] (0.115,0.26) circle (0.047);}}
+% Quiet mixed-case section head: drop, deep-teal title, hairline.
+% [AUorange] (coral) marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{DeepTeal} m}{%
+  \par\vspace{0.80em}%
+  {\raggedright\PosterSemibold\fontsize{23.5}{28.2}\selectfont\color{#1}%
+   \DropMark{#1}\hspace{0.34em}#2\par}%
+  \vspace{0.14em}%
+  {\color{WaveBlue!50}\rule{0.34\linewidth}{1.0pt}\par}%
+  \vspace{-0.02em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{24.1}{33.0}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.2}{26.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% Full-page backdrop, painted back to front: ONE monumental system of
+% concentric ripples spreading from behind the title across the whole
+% page (rings that widen, thin, and fade), smaller ripple sets where
+% other drops land in the gutters and margins, a lily-pad cluster with
+% one coral lotus in the top-left corner, and a coral koi crossing the
+% lane beneath the columns. The drop that made the rings falls just
+% above the title.
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % --- the great ripple: TRAINS of crests, not single rings. Each
+    % train is a strong crest with one or two fainter companions just
+    % behind it, and the gaps between trains widen as the wave runs ---
+    \foreach \r/\o/\w in {
+      3.7/40/2.2,  4.6/26/1.2,
+      9.2/34/2.2,  10.3/22/1.2,
+      16.6/30/2.1, 18.0/19/1.2,  19.1/13/0.9,
+      26.6/26/2.0, 28.3/16/1.1,
+      38.6/22/1.9, 40.7/13/1.1,
+      53.0/17/1.7, 55.4/10/1.0,
+      70.0/12/1.5, 73.0/7/0.9}{
+      \draw[DeepTeal!\o,line width=\w pt]
+        ($(current page.north west)+(60cm,-7.5cm)$) circle (\r cm);}
+    % --- the drop that made them, falling just above the title, with
+    % two beads of splash leaping aside ---
+    \begin{scope}[shift={($(current page.north west)+(60cm,-2.55cm)$)},scale=1.55]
+      \fill[DeepTeal!80] (0,0.30)
+        .. controls (0.15,0.08) and (0.185,0.00) .. (0.185,-0.09)
+        arc[start angle=0,end angle=-180,radius=0.185]
+        .. controls (-0.185,0.00) and (-0.15,0.08) .. (0,0.30) -- cycle;
+      \fill[PoolWhite,opacity=0.80] (-0.062,-0.11) circle (0.048);
+    \end{scope}
+    \fill[DeepTeal!55] ($(current page.north west)+(58.72cm,-2.06cm)$) circle (0.085cm);
+    \fill[DeepTeal!40] ($(current page.north west)+(61.45cm,-1.86cm)$) circle (0.062cm);
+    \fill[DeepTeal!30] ($(current page.north west)+(58.05cm,-1.35cm)$) circle (0.048cm);
+    % --- other drops landing: small ripple sets in gutters and margins ---
+    \foreach \cx/\cy/\ss in {38.5/23.5/1.00, 38.5/44.5/0.72, 38.5/58.5/0.88,
+      81.5/31.0/0.90, 81.5/52.5/0.70, 2.05/34.5/0.80, 117.95/24.0/0.85,
+      117.95/49.5/0.68, 9.5/64.8/0.90, 104.5/8.6/0.62}{
+      \draw[WaveBlue!55,line width=1.2pt]
+        ($(current page.north west)+(\cx cm,-\cy cm)$) circle ({0.34*\ss cm});
+      \draw[WaveBlue!38,line width=1.1pt]
+        ($(current page.north west)+(\cx cm,-\cy cm)$) circle ({0.75*\ss cm});
+      \draw[WaveBlue!22,line width=1.0pt]
+        ($(current page.north west)+(\cx cm,-\cy cm)$) circle ({1.22*\ss cm});}
+    \foreach \px/\py in {38.5/35.5, 81.5/19.5, 81.5/61.0, 2.0/55.0,
+      118.0/38.5, 60.0/64.6}{
+      \fill[WaveBlue!60]
+        ($(current page.north west)+(\px cm,-\py cm)$) circle (0.055cm);}
+    % --- lily pads, top-left corner; one coral lotus on the big pad ---
+    \begin{scope}[shift={($(current page.north west)+(5.2cm,-4.1cm)$)}]
+      \fill[LeafGreen!95] (0,0) -- (24:1.32) arc[start angle=24,end angle=370,radius=1.32] -- cycle;
+    \end{scope}
+    \begin{scope}[shift={($(current page.north west)+(8.10cm,-6.20cm)$)}]
+      \fill[LeafGreen!74] (0,0) -- (208:0.80) arc[start angle=208,end angle=550,radius=0.80] -- cycle;
+    \end{scope}
+    \begin{scope}[shift={($(current page.north west)+(3.00cm,-6.65cm)$)}]
+      \fill[LeafGreen!58] (0,0) -- (98:0.54) arc[start angle=98,end angle=438,radius=0.54] -- cycle;
+    \end{scope}
+    \begin{scope}[shift={($(current page.north west)+(4.72cm,-3.80cm)$)}]
+      \foreach \a in {90,162,234,306,18}{
+        \fill[AUorange!85,rotate=\a] (0,0.13) ellipse (0.115 and 0.295);}
+      \foreach \a in {54,126,198,270,342}{
+        \fill[AUorange!55,rotate=\a] (0,0.085) ellipse (0.082 and 0.195);}
+      \fill[PoolWhite!72!AUorange] (0,0) circle (0.085);
+    \end{scope}
+    % a faint ring around the pads, as if one just settled there
+    \draw[WaveBlue!30,line width=1.1pt]
+      ($(current page.north west)+(5.6cm,-4.9cm)$) circle (2.7cm);
+    % --- one coral koi crossing the lane beneath the columns ---
+    \begin{scope}[shift={($(current page.north west)+(68.5cm,-63.30cm)$)},rotate=6,scale=1.18]
+      % tail fan (two flukes), then one smooth teardrop body over it
+      \fill[AUorange!70]
+        (-0.36,0.00)
+        .. controls (-0.80,0.28) and (-1.14,0.42) .. (-1.32,0.33)
+        .. controls (-1.14,0.13) and (-1.09,0.05) .. (-1.07,0.00)
+        .. controls (-1.09,-0.05) and (-1.14,-0.13) .. (-1.32,-0.33)
+        .. controls (-1.14,-0.42) and (-0.80,-0.28) .. (-0.36,0.00) -- cycle;
+      \fill[AUorange!78,rotate around={40:(0.42,0.26)}] (0.42,0.26) ellipse (0.17 and 0.062);
+      \fill[AUorange!78,rotate around={-40:(0.42,-0.26)}] (0.42,-0.26) ellipse (0.17 and 0.062);
+      \fill[AUorange]
+        (1.28,0.00)
+        .. controls (1.06,0.28) and (0.48,0.33) .. (-0.24,0.17)
+        .. controls (-0.72,0.09) and (-0.72,-0.09) .. (-0.24,-0.17)
+        .. controls (0.48,-0.33) and (1.06,-0.28) .. (1.28,0.00) -- cycle;
+      \fill[PoolWhite,opacity=0.80] (0.32,0.07) ellipse (0.165 and 0.088);
+      \fill[PoolWhite,opacity=0.70] (-0.16,-0.05) ellipse (0.115 and 0.062);
+    \end{scope}
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+
+
+% The title stands at the centre of the ripple, under the falling
+% drop; the logo keeps the top-right corner.
+\begin{minipage}[c]{0.18\textwidth}
+  \
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplaySerif\bfseries\fontsize{86}{93}\selectfont\color{DeepTeal} \DisplayTitle\par}
+  \vspace{0.30em}
+  {\DisplaySerif\itshape\fontsize{36}{46}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.55em}
+  {\fontsize{27}{35}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.2cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.42em}
+{\centering\PosterSemibold\fontsize{37}{48}\selectfont\color{AUorange}\Contribution\par}
+
+\vspace{1.15em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{47.6cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\color{PaleAqua}\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.4pt}\setlength{\fboxsep}{0pt}%
+\fcolorbox{PaleAqua!70}{DeepWater}{\begin{minipage}{\dimexpr\textwidth-2\fboxrule}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24.5}{30}\selectfont\color{PaleAqua}%
+   \BubbleTrio{PaleAqua}\hspace{0.34em}%
+   Theorem\quad{\itshape(#1)}\par}
+  \vspace{0.45em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{DeepTeal}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.55cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{WaveBlue!50}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=3.4cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

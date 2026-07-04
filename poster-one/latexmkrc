@@ -1,0 +1,7 @@
+## Build locally with:   latexmk
+## LuaLaTeX is REQUIRED -- the bundled OpenType fonts load through fontspec.
+## On Overleaf ALSO set: Menu -> Compiler -> LuaLaTeX (that menu wins over this file).
+$pdf_mode  = 4;          # 4 = LuaLaTeX
+$lualatex  = 'lualatex -interaction=nonstopmode -synctex=1 -file-line-error %O %S';
+$clean_ext = 'synctex.gz %R-luamml-mathml.html nav snm';
+@default_files = ('poster-one.tex');

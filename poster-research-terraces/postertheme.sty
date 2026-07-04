@@ -1,0 +1,371 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Contour Fields -- agriculture as a modern, quiet landscape.
+%  The whole page is a contour-farmed valley: sweeping terrace bands
+%  that start as a near-white morning sky at the top and deepen, band
+%  by band, toward the bottom edge, each ridge traced by a thin
+%  contour line (level sets -- the geometer's landscape). The three
+%  columns and the footer float above the fields on rounded white
+%  cards with soft flat shadows; the gutters between the cards let the
+%  terraces show through. A pale morning sun rises behind the title;
+%  three birds cross the sky by the logo. No frames, no ornaments, no
+%  small caps -- just the landscape, the cards, and the type.
+%
+%  Palette: warm near-white ground and cards, charcoal-green ink, deep
+%  pine heads, ONE terracotta accent, sage and wheat for the fields.
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-terraces poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Source Sans 3) + Alegreya display + STIX math ---------
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplaySerif{Alegreya}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, BoldFont=*-Bold, ItalicFont=*-Italic,
+  Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: near-white ground, pine and terracotta on white cards -----
+\RequirePackage{xcolor}
+\definecolor{FieldPaper}{RGB}{250,248,240}  % the sky / page base
+\definecolor{CardWhite}{RGB}{254,253,249}   % floating content cards
+\definecolor{Pine}{RGB}{23,92,58}           % deep pine: heads, borders
+\definecolor{Sage}{RGB}{152,172,136}        % field tint (green bands)
+\definecolor{Wheat}{RGB}{224,198,142}       % field tint (gold bands)
+\definecolor{SunGold}{RGB}{238,196,116}     % the morning sun
+\definecolor{AUnavy}{RGB}{40,46,38}         % charcoal-green ink (text)
+\definecolor{AUorange}{RGB}{178,80,43}      % ONE terracotta accent
+\definecolor{AUgray}{RGB}{99,107,95}        % gray-green secondary
+\pagecolor{FieldPaper}
+\color{AUnavy}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=Pine, linkcolor=Pine,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% A single tilted leaf with a light mid-vein; #1 = colour.
+\newcommand{\LeafMark}[1]{%
+  \tikz[baseline=-0.55ex]{%
+    \fill[#1,rotate around={-30:(0.15,0.02)}]
+      (0.15,0.02) ellipse (0.21 and 0.088);
+    \draw[CardWhite,line width=1.0pt,line cap=round]
+      (0.02,-0.06) -- (0.28,0.10);}}
+% Quiet mixed-case section head: leaf, deep-pine title, hairline.
+% [AUorange] (terracotta) marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{Pine} m}{%
+  \par\vspace{0.80em}%
+  {\raggedright\PosterSemibold\fontsize{23.5}{28.2}\selectfont\color{#1}%
+   \LeafMark{#1}\hspace{0.34em}#2\par}%
+  \vspace{0.14em}%
+  {\color{Sage!55}\rule{0.34\linewidth}{1.0pt}\par}%
+  \vspace{-0.02em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{24.1}{33.0}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.2}{26.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% Full-page backdrop, painted back to front: the terraced valley (each
+% band a sweeping curve with a thin contour line on its ridge, tints
+% deepening toward the bottom), a pale morning sun, three birds, then
+% the white cards -- flat shadow, card, hairline border -- that the
+% text columns and the footer sit on.
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % --- terrace bands (top edge y, curve amplitude, colour) ---
+    \foreach \yy/\aa/\bb/\cc in {
+        15.5/1.60/-1.20/Sage!14,
+        23.6/-1.40/1.90/Wheat!18,
+        31.6/2.10/-1.10/Sage!22,
+        39.6/-1.30/1.80/Wheat!26,
+        47.4/1.90/-1.50/Sage!30,
+        54.8/-1.60/1.30/Wheat!34,
+        61.8/1.70/-1.60/Sage!40,
+        67.2/-1.10/1.40/Pine!32}{
+      \fill[\cc]
+        ($(current page.north west)+(0,-\yy cm)$)
+        .. controls ($(current page.north west)+(30cm,-\yy cm+\aa cm)$)
+               and ($(current page.north west)+(74cm,-\yy cm+\bb cm)$) ..
+        ($(current page.north west)+(120cm,-\yy cm+0.3cm)$)
+        -- (current page.south east) -- (current page.south west) -- cycle;
+      \draw[AUgray!40,line width=1.2pt]
+        ($(current page.north west)+(0,-\yy cm)$)
+        .. controls ($(current page.north west)+(30cm,-\yy cm+\aa cm)$)
+               and ($(current page.north west)+(74cm,-\yy cm+\bb cm)$) ..
+        ($(current page.north west)+(120cm,-\yy cm+0.3cm)$);}
+    % --- morning sun behind the header, left of the title ---
+    % (halo first, then the core, then the inner ring)
+    \draw[SunGold!45,line width=1.1pt]
+      ($(current page.north west)+(12.9cm,-6.3cm)$) circle (6.8cm);
+    \fill[SunGold!35]
+      ($(current page.north west)+(12.9cm,-6.3cm)$) circle (5.0cm);
+    \fill[SunGold]
+      ($(current page.north west)+(12.9cm,-6.3cm)$) circle (4.3cm);
+    \draw[SunGold!80,line width=1.6pt]
+      ($(current page.north west)+(12.9cm,-6.3cm)$) circle (5.7cm);
+    % --- three birds crossing the sky, left of the logo ---
+    \foreach \bx/\by/\bs/\bo in {89.2/3.5/0.36/62, 92.8/4.7/0.29/52, 86.7/5.4/0.24/44}{
+      \draw[Pine!\bo,line width=1.8pt,line cap=round]
+        ($(current page.north west)+(\bx cm,-\by cm)$)
+        .. controls +(0.5*\bs cm,0.55*\bs cm) .. +(\bs cm,0.05cm)
+        ($(current page.north west)+(\bx cm+\bs cm,-\by cm+0.02cm)$)
+        .. controls +(0.5*\bs cm,0.55*\bs cm) .. +(\bs cm,0.02cm);}
+    % --- small life on the land: trees in the margins, bales in the gutters ---
+    \foreach \tx/\ty/\ts in {1.30/56.4/1.00, 118.65/43.4/0.85}{
+      \draw[Pine!60,line width=2.2pt,line cap=round]
+        ($(current page.north west)+(\tx cm,-\ty cm)$) -- ++(0,0.55*\ts cm);
+      \fill[Pine!48]
+        ($(current page.north west)+(\tx cm,-\ty cm+0.55*\ts cm+0.45*\ts cm)$)
+        circle (0.55*\ts cm);}
+    \foreach \bx/\by in {38.5/53.0, 81.5/36.2}{
+      \fill[Wheat!75] ($(current page.north west)+(\bx cm,-\by cm)$) circle (0.27cm);
+      \draw[Wheat,line width=1.0pt]
+        ($(current page.north west)+(\bx cm,-\by cm)$) circle (0.16cm);
+      \draw[Wheat,line width=1.0pt]
+        ($(current page.north west)+(\bx cm-0.27cm,-\by cm)$)
+        arc[start angle=180,end angle=360,radius=0.27cm];}
+    % --- the floating cards: shadow, fill, hairline ---
+    \foreach \xa/\xb in {2.55/37.65, 39.35/80.65, 82.35/117.45}{
+      \fill[Pine!13,rounded corners=0.55cm]
+        ($(current page.north west)+(\xa cm+0.22cm,-11.85cm-0.26cm)$)
+        rectangle
+        ($(current page.north west)+(\xb cm+0.22cm,-61.75cm-0.26cm)$);
+      \fill[CardWhite,rounded corners=0.55cm]
+        ($(current page.north west)+(\xa cm,-11.85cm)$)
+        rectangle
+        ($(current page.north west)+(\xb cm,-61.75cm)$);
+      \draw[Pine!22,line width=0.9pt,rounded corners=0.55cm]
+        ($(current page.north west)+(\xa cm,-11.85cm)$)
+        rectangle
+        ($(current page.north west)+(\xb cm,-61.75cm)$);}
+    \fill[Pine!13,rounded corners=0.55cm]
+      ($(current page.north west)+(2.77cm,-63.56cm)$)
+      rectangle ($(current page.north west)+(117.67cm,-68.81cm)$);
+    \fill[CardWhite,rounded corners=0.55cm]
+      ($(current page.north west)+(2.55cm,-63.30cm)$)
+      rectangle ($(current page.north west)+(117.45cm,-68.55cm)$);
+    \draw[Pine!22,line width=0.9pt,rounded corners=0.55cm]
+      ($(current page.north west)+(2.55cm,-63.30cm)$)
+      rectangle ($(current page.north west)+(117.45cm,-68.55cm)$);
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+
+
+% The title floats on the morning sky -- no card, no rules. The logo
+% keeps the top-right corner; the sun rises at the left.
+\begin{minipage}[c]{0.18\textwidth}
+  \
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplaySerif\bfseries\fontsize{88}{95}\selectfont\color{Pine} \DisplayTitle\par}
+  \vspace{0.30em}
+  {\DisplaySerif\itshape\fontsize{36}{46}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.55em}
+  {\fontsize{27}{35}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.2cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.55em}
+{\centering\PosterSemibold\fontsize{37}{48}\selectfont\color{AUorange}\Contribution\par}
+
+\vspace{1.85em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{47.6cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\color{AUorange}\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.2pt}\setlength{\fboxsep}{0pt}%
+\fcolorbox{Pine!38}{Pine!7}{\begin{minipage}{\dimexpr\textwidth-2\fboxrule}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24.5}{30}\selectfont\color{AUorange}%
+   \LeafMark{AUorange}\hspace{0.34em}%
+   Theorem\quad{\itshape(#1)}\par}
+  \vspace{0.45em}
+  {\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{Pine}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.78cm}
+
+\noindent\begin{minipage}{\textwidth}
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\qrcode[height=3.4cm]{\PosterQRURL}}\par
+    \vspace{4pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

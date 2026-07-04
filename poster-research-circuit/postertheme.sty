@@ -1,0 +1,374 @@
+% ======================================================================
+%  Auburn University Research Poster -- accessible (PDF/UA-1 tagged)
+%  THEME: Circuit Board -- electrical and computer engineering. The
+%  poster IS a printed circuit board: deep solder-mask green, and all
+%  body text is the board's white SILKSCREEN layer. Copper traces with
+%  the signature 45-degree bends run down the column gutters and
+%  margins, ending in gold pads and vias; a single chamfered perimeter
+%  trace frames the board; mounting holes sit in the four corners; a
+%  muted row of edge-connector fingers runs along the bottom. The one-line
+%  contribution is underlined by a full-width copper trace terminated
+%  in pads. And the main theorem is the board's MAIN CHIP: a black
+%  package with tin pins on both sides and a gold pin-1 dot by its
+%  label. The title is set in Source Code Pro -- the engineer's mono.
+%
+%  Palette: solder-mask green, silkscreen white, copper and pad gold,
+%  ONE gold accent. Mixed-case heads, no frames, no ornaments.
+%
+%  Because this poster is a plain article (not beamer), it compiles to
+%  a REAL tagged, PDF/UA-1 conformant PDF: reading order, language, and
+%  the logo, figures, and QR code tagged as Figures with alt text.
+%  (The QR code sits on a small white card: inverted QR codes scan
+%  poorly, so the modules stay dark-on-light even on this dark board.)
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf:  Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:   latexmk
+% ======================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{postertheme}[2026/07/04 poster-research-circuit poster theme]
+
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape --------------------------------------
+\RequirePackage[paperwidth=120cm, paperheight=72cm,
+            top=2.4cm, bottom=2.0cm, left=3.4cm, right=3.4cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlength{\emergencystretch}{1.5em}  % kill loose justified lines
+
+% ----- sans body (Source Sans 3) + Source Code Pro display + STIX -------
+\RequirePackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Bold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\PosterSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\newfontfamily\PosterMedium{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Medium, Ligatures=TeX]
+\newfontfamily\DisplayMono{SourceCodePro}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, ItalicFont=*-RegularIt, Ligatures=TeX]
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour: solder mask, silkscreen, copper, gold ---------------------
+\RequirePackage{xcolor}
+\definecolor{BoardGreen}{RGB}{10,42,34}    % the page: solder-mask green
+\definecolor{SilkWhite}{RGB}{240,246,243}  % silkscreen: main text
+\definecolor{Copper}{RGB}{205,132,63}      % traces
+\definecolor{PadGold}{RGB}{228,181,96}     % pads, fingers, the ONE accent
+\definecolor{TinSilver}{RGB}{188,199,196}  % pins, drill rims, fiducials
+\definecolor{ChipBlack}{RGB}{18,20,22}     % the main chip (theorem card)
+\definecolor{AUnavy}{RGB}{10,42,34}        % (board green again; QR modules)
+\definecolor{AUorange}{RGB}{228,181,96}    % = PadGold, the accent slot
+\definecolor{AUgray}{RGB}{156,176,166}     % gray-green secondary
+\pagecolor{BoardGreen}
+\color{SilkWhite}
+
+% ----- tagged figures (hero, trio, torus, logo, QR), thesis pattern -----
+\RequirePackage{qrcode}
+\RequirePackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+% \PosterFigure{<alt text>}{<content>} -- tag <content> as ONE Figure
+% with alt text and a bounding box, exactly like an included image.
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links (pad gold: visible on the dark board) ----------------------
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=PadGold, linkcolor=PadGold,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+% A little resistor (the schematic zigzag); #1 = colour.
+\newcommand{\ResistorMark}[1]{%
+  \tikz[baseline=-0.52ex]{%
+    \draw[#1,line width=1.5pt,line cap=round,line join=round]
+      (0,0) -- (0.09,0) -- (0.155,0.135) -- (0.285,-0.135)
+      -- (0.415,0.135) -- (0.545,-0.135) -- (0.61,0) -- (0.70,0);}}
+% The chip's gold pin-1 dot, for the theorem label line; #1 = colour.
+\newcommand{\PinOne}[1]{%
+  \tikz[baseline=-0.50ex]{\fill[#1] (0,0) circle (0.115);}}
+% Quiet mixed-case section head: resistor, silkscreen title, hairline.
+% [AUorange] (pad gold) marks the ONE main-result label.
+\NewDocumentCommand{\PosterSection}{O{SilkWhite} m}{%
+  \par\vspace{0.80em}%
+  {\raggedright\PosterSemibold\fontsize{23.5}{28.2}\selectfont\color{#1}%
+   \ResistorMark{PadGold}\hspace{0.34em}#2\par}%
+  \vspace{0.14em}%
+  {\color{Copper!45}\rule{0.34\linewidth}{1.0pt}\par}%
+  \vspace{-0.02em}}
+% Run-in term label.
+\newcommand{\auterm}[1]{{\PosterSemibold #1}}
+\newcommand{\auhead}[1]{{\PosterSemibold #1}}
+\newcommand{\PosterBody}{\fontsize{24.1}{33.0}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{19.2}{26.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{17.4}{23.2}\selectfont}
+% A gold pad with a drilled centre, drawn at the current scope origin.
+\newcommand{\ViaPad}[1]{%
+  \draw[PadGold,line width=2.6pt] (0,0) circle (#1);
+  \fill[BoardGreen!55!ChipBlack] (0,0) circle ({0.45*#1});}
+% A small outlined chip, the board's quiet maker's mark (header left).
+\newcommand{\StyleMotif}{%
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \draw[Copper,line width=1.7pt,rounded corners=2.4pt]
+      (0,0) rectangle (2.55,2.55);
+    \foreach \t in {0.51,1.02,1.53,2.04}{
+      \draw[Copper,line width=1.5pt,line cap=round]
+        (\t,0) -- (\t,-0.30) (\t,2.55) -- (\t,2.85)
+        (0,\t) -- (-0.30,\t) (2.55,\t) -- (2.85,\t);}
+    \fill[PadGold] (0.42,2.13) circle (0.10);
+  \end{tikzpicture}}
+% Full-page backdrop, painted back to front -- a QUIET board: one
+% chamfered perimeter trace with a few vias, a mounting hole in each
+% corner, one thin trace down each column gutter, and a muted row of
+% edge-connector fingers along the bottom. The chip pins and the
+% contribution-trace pads are positioned against the measured text
+% layout (marked TUNED).
+\newcommand{\StyleBackdrop}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % --- the perimeter trace, corners chamfered at 45 degrees ---
+    \draw[Copper!80,line width=1.8pt,line join=round]
+      ($(current page.north west)+(3.95cm,-1.35cm)$) --
+      ($(current page.north west)+(116.05cm,-1.35cm)$) --
+      ($(current page.north west)+(118.65cm,-3.95cm)$) --
+      ($(current page.north west)+(118.65cm,-68.05cm)$) --
+      ($(current page.north west)+(116.05cm,-70.65cm)$) --
+      ($(current page.north west)+(3.95cm,-70.65cm)$) --
+      ($(current page.north west)+(1.35cm,-68.05cm)$) --
+      ($(current page.north west)+(1.35cm,-3.95cm)$) -- cycle;
+    \foreach \vx/\vy in {30/1.35, 90/1.35, 1.35/36, 118.65/36}{
+      \begin{scope}[shift={($(current page.north west)+(\vx cm,-\vy cm)$)}]\ViaPad{0.22}\end{scope}}
+    % --- mounting holes, one in each corner keepout ---
+    \foreach \hx/\hy in {2.0/2.0, 118.0/2.0, 2.0/70.0, 118.0/70.0}{
+      \begin{scope}[shift={($(current page.north west)+(\hx cm,-\hy cm)$)}]
+        \draw[PadGold,line width=3.0pt] (0,0) circle (0.55);
+        \fill[BoardGreen!45!ChipBlack] (0,0) circle (0.33);
+      \end{scope}}
+    % --- one thin trace down each gutter, a single 45-degree jog ---
+    \foreach \gx/\sgn in {38.5/1, 81.5/-1}{
+      \draw[Copper!60,line width=1.5pt,line join=round]
+        ($(current page.north west)+(\gx cm-\sgn*0.3cm,-16.6cm)$) --
+        ($(current page.north west)+(\gx cm-\sgn*0.3cm,-37.2cm)$) --
+        ($(current page.north west)+(\gx cm+\sgn*0.3cm,-37.8cm)$) --
+        ($(current page.north west)+(\gx cm+\sgn*0.3cm,-60.2cm)$);
+      \begin{scope}[shift={($(current page.north west)+(\gx cm-\sgn*0.3cm,-16.6cm)$)}]\ViaPad{0.26}\end{scope}
+      \begin{scope}[shift={($(current page.north west)+(\gx cm+\sgn*0.3cm,-60.2cm)$)}]\ViaPad{0.26}\end{scope}}
+    % --- muted edge-connector fingers along the bottom ---
+    \foreach \i in {0,...,35}{
+      \pgfmathsetmacro\fx{7.0+\i*3.0}
+      \fill[PadGold!72,rounded corners=2.2pt]
+        ($(current page.south west)+(\fx cm,0cm)$)
+        rectangle ($(current page.south west)+(\fx cm+1.5cm,0.92cm)$);}
+    % --- TUNED to the measured text layout (re-measure if it moves) ---
+    % tin pins for the main chip, both sides of the theorem panel
+    % (panel measured at x 40.25-79.75, y 22.60-32.84)
+    \foreach \py in {23.85, 24.97, 26.09, 27.21, 28.33, 29.45, 30.57, 31.69}{
+      \fill[TinSilver,rounded corners=1.8pt]
+        ($(current page.north west)+(39.50cm,-\py cm)$)
+        rectangle ($(current page.north west)+(40.40cm,-\py cm-0.34cm)$);
+      \fill[TinSilver,rounded corners=1.8pt]
+        ($(current page.north west)+(79.60cm,-\py cm)$)
+        rectangle ($(current page.north west)+(80.50cm,-\py cm-0.34cm)$);}
+    % gold pads terminating the contribution's copper trace (rule at y 11.52)
+    \begin{scope}[shift={($(current page.north west)+(3.40cm,-11.56cm)$)}]\ViaPad{0.30}\end{scope}
+    \begin{scope}[shift={($(current page.north west)+(116.60cm,-11.56cm)$)}]\ViaPad{0.30}\end{scope}
+  \end{tikzpicture}}
+
+% ======================================================================
+%  EASY-INPUT LAYER -- everything below lets the main file stay plain.
+% ======================================================================
+\RequirePackage{environ}
+
+% ---- poster info: filled by \PosterSetup{key = value, ...} -------------
+\newcommand{\DisplayTitle}{Title}
+\newcommand{\TechTitle}{}
+\newcommand{\PosterAuthors}{}
+\newcommand{\PosterDept}{}
+\newcommand{\Contribution}{}
+\newcommand{\PosterURL}{}
+\newcommand{\PosterURLShort}{}
+\newcommand{\PosterQRURL}{https://example.org}
+\newcommand{\PosterContact}{}
+\newcommand{\PosterQRLabel}{Scan me}
+\ExplSyntaxOn
+\keys_define:nn { poster }
+  {
+    title      .code:n = { \gdef\DisplayTitle{#1} },
+    subtitle   .code:n = { \gdef\TechTitle{#1} },
+    authors    .code:n = { \gdef\PosterAuthors{#1} },
+    department .code:n = { \gdef\PosterDept{#1} },
+    highlight  .code:n = { \gdef\Contribution{#1} },
+    contact    .code:n = { \gdef\PosterContact{#1} },
+    repo-url   .code:n = { \gdef\PosterURL{#1} },
+    repo-name  .code:n = { \gdef\PosterURLShort{#1} },
+    qr-url     .code:n = { \gdef\PosterQRURL{#1} },
+    qr-label   .code:n = { \gdef\PosterQRLabel{#1} },
+    pdf-title  .code:n = { \hypersetup{pdftitle={#1}} },
+    pdf-author .code:n = { \hypersetup{pdfauthor={#1}} },
+  }
+\NewDocumentCommand{\PosterSetup}{m}{ \keys_set:nn { poster } {#1} }
+\ExplSyntaxOff
+
+% ---- the header (title block over the theme backdrop) ------------------
+\newcommand{\PosterHeader}{
+\StyleBackdrop
+
+
+% The title is the board's largest silkscreen legend, set in the
+% engineer's mono; the logo keeps the top-right corner.
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedright\hspace{1.2cm}\StyleMotif
+\end{minipage}\hfill
+\begin{minipage}[c]{0.58\textwidth}\centering
+  {\DisplayMono\fontsize{74}{82}\selectfont \DisplayTitle\par}
+  \vspace{0.38em}
+  {\DisplayMono\itshape\fontsize{31}{40}\selectfont\color{AUgray} \TechTitle\par}
+  \vspace{0.55em}
+  {\fontsize{27}{35}\selectfont \PosterAuthors\;
+   {\color{AUgray}\textperiodcentered\; \PosterDept}\par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \raggedleft
+  \includegraphics[height=6.2cm,
+    alt={Full-color Auburn University AU logo}]{auburn-logo-color-cropped.png}
+\end{minipage}
+
+\vspace{0.55em}
+{\centering\PosterSemibold\fontsize{37}{48}\selectfont\color{AUorange}\Contribution\par}
+\vspace{0.34em}
+% the contribution's underline is a copper trace (pads added in the
+% backdrop at its measured endpoints)
+{\color{Copper}\rule{\textwidth}{2.4pt}}
+
+\vspace{0.58em}
+}
+
+% ---- the three columns --------------------------------------------------
+\newlength{\BodyH}\setlength{\BodyH}{47.9cm}
+\newif\ifposter@firstcol
+\newenvironment{postercolumns}
+  {\poster@firstcoltrue\noindent\ignorespaces}
+  {\unskip\par}
+% \begin{postercolumn}         -> a side column (0.295\textwidth)
+% \begin{postercolumn}[wide]   -> the centre column (0.35\textwidth)
+\newenvironment{postercolumn}[1][narrow]{%
+  \ifposter@firstcol\global\poster@firstcolfalse\else\hfill\fi
+  \def\poster@w{0.295}%
+  \def\poster@tmp{#1}\def\poster@wide{wide}%
+  \ifx\poster@tmp\poster@wide\def\poster@w{0.35}\fi
+  \begin{minipage}[t][\BodyH][s]{\poster@w\textwidth}\PosterBody
+}{\end{minipage}\ignorespaces}
+
+% ---- sections: plain \section works, straight from your paper ----------
+\RenewDocumentCommand{\section}{s o m}{\PosterSection{#3}}
+\RenewDocumentCommand{\subsection}{s o m}{\par\vspace{0.35em}\auterm{#3.}\ \ignorespaces}
+\RenewDocumentCommand{\paragraph}{s o m}{\par\auterm{#3.}\ \ignorespaces}
+\NewDocumentCommand{\accentsection}{m}{\PosterSection[AUorange]{#1}}
+\NewDocumentCommand{\term}{m}{\auterm{#1}}
+
+% --- theorem: the poster's ONE highlighted panel -------------------------
+% \begin{theorem}[attribution] ... \end{theorem}; inside it, \punchline{...}
+% sets one display-size equation in the accent colour.
+\newcommand{\punchline}[1]{{\color{PadGold}\fontsize{38}{45}\selectfont
+  \begin{equation*}#1\end{equation*}}}
+\NewEnviron{theorem}[1][]{%
+  \par\vspace{0.3em}%
+{\setlength{\fboxrule}{1.6pt}\setlength{\fboxsep}{0pt}%
+\fcolorbox{TinSilver!60}{ChipBlack}{\begin{minipage}{\dimexpr\textwidth-2\fboxrule}
+  \vspace{0.9em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3em}
+  {\PosterSemibold\fontsize{24.5}{30}\selectfont\color{PadGold}%
+   \PinOne{PadGold}\hspace{0.34em}%
+   Theorem\quad{\itshape(#1)}\par}
+  \vspace{0.45em}
+  {\color{white}\fontsize{29}{41}\selectfont
+  \BODY\par}
+  \end{minipage}\end{center}\vspace{0.9em}
+\end{minipage}}}\par}
+
+% ---- quiet theorem-like environments (paste from your paper) -----------
+% \begin{definition}[name] ... \end{definition}   and likewise lemma,
+% proposition, corollary, remark, example, conjecture; plus proof.
+\newcommand{\poster@runin}[2]{%
+  \par\addvspace{0.40em}%
+  {\PosterSemibold\color{SilkWhite}#1\IfNoValueTF{#2}{}{\ (#2)}.}\ \ignorespaces}
+\DeclareDocumentEnvironment{definition}{o}{\poster@runin{Definition}{#1}}{\par}
+\DeclareDocumentEnvironment{lemma}{o}{\poster@runin{Lemma}{#1}}{\par}
+\DeclareDocumentEnvironment{proposition}{o}{\poster@runin{Proposition}{#1}}{\par}
+\DeclareDocumentEnvironment{corollary}{o}{\poster@runin{Corollary}{#1}}{\par}
+\DeclareDocumentEnvironment{remark}{o}{\poster@runin{Remark}{#1}}{\par}
+\DeclareDocumentEnvironment{example}{o}{\poster@runin{Example}{#1}}{\par}
+\DeclareDocumentEnvironment{conjecture}{o}{\poster@runin{Conjecture}{#1}}{\par}
+\newcommand{\posterqedsymbol}{%
+  \tikz[baseline=0.02cm]\draw[line width=1.1pt] (0,0) rectangle (0.26,0.26);}
+\DeclareDocumentEnvironment{proof}{o}
+  {\par\addvspace{0.30em}{\itshape\IfNoValueTF{#1}{Proof}{#1}.}\ \ignorespaces}
+  {\hfill\posterqedsymbol\par}
+
+% ---- the footer: references text inside, QR block automatic ------------
+\NewEnviron{posterfooter}{%
+\vspace{0.36cm}
+
+\noindent\begin{minipage}{\textwidth}
+{\color{AUgray!40}\rule{\textwidth}{1.2pt}}
+\vspace{0.55em}
+
+\begin{minipage}[c]{0.78\textwidth}
+  \PosterSmall\color{AUgray}
+\BODY
+  \par
+\end{minipage}\hfill
+\begin{minipage}[c]{0.14\textwidth}
+  \raggedleft
+  \begin{minipage}{4.6cm}
+    \centering
+    % QR on a small white card: dark modules on light scan reliably;
+    % an inverted (light-on-dark) QR often does not. The group resets
+    % hyperref's urlcolor, which the qrcode package prints with.
+    \PosterFigure{QR code linking to the LinkedIn profile of \PosterAuthors\ at \PosterQRURL}%
+                 {\setlength{\fboxsep}{8pt}\colorbox{white}{\begingroup
+                    \hypersetup{urlcolor=AUnavy}%
+                    \qrcode[height=3.15cm]{\PosterQRURL}\endgroup}}\par
+    \vspace{5pt}
+    {\PosterSemibold\fontsize{15}{20}\selectfont\color{AUorange} \PosterQRLabel{}\par}
+  \end{minipage}
+\end{minipage}
+\end{minipage}}
+
+\endinput

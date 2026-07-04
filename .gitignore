@@ -1,0 +1,28 @@
+## LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.run.xml
+*.bcf
+## compiled posters (outputs -- the previews/ gallery shows them instead)
+*.pdf
+## macOS
+.DS_Store
+*-luamml-mathml.html
+## editor / tooling
+.*/
+!.git*/
+## working backups (local only)
+_*.tar.gz
+## stray / unreferenced heavy assets
+/auburn_logo_childlike_styple.png
+/poster-research-childlike/auburn-logo-childlike.png
+/poster-research-childlike/Aubie.png

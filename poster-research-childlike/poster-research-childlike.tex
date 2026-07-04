@@ -1,0 +1,447 @@
+% ======================================================================
+%  Auburn University research poster -- childlike crayon variant
+%
+%  Same Calabi--Yau content as the other posters in this folder, but with
+%  a softer Auburn visual system: warm paper, navy/orange crayon accents,
+%  hand-drawn AU logo, and a small bottom strip of quiet doodles.
+%
+%  120 x 72 cm landscape. Compiles with LuaLaTeX.
+%
+%  COMPILE WITH LuaLaTeX:
+%    * Overleaf: Menu -> Compiler -> LuaLaTeX, then Recompile.
+%    * Locally:  latexmk
+% ======================================================================
+\DocumentMetadata{lang=en-US, pdfstandard=ua-1, tagging=on}
+\documentclass[12pt]{article}
+
+% Fail fast, with a clear message, if the wrong engine is used.
+\usepackage{iftex}
+\RequireLuaTeX
+
+% ----- page: 120 x 72 cm landscape -------------------------------------
+\usepackage[paperwidth=120cm, paperheight=72cm,
+            top=2.1cm, bottom=2.0cm, left=3.6cm, right=3.6cm]{geometry}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\setlength{\emergencystretch}{1.5em}
+
+% ----- type: readable research body, gentle display voice ---------------
+\usepackage{fontspec}
+\setmainfont{Nunito-Regular.ttf}[Path=fonts/,
+  ItalicFont=Nunito-Italic.ttf, BoldFont=Nunito-Regular.ttf, Ligatures=TeX]
+\newfontfamily\TitleFont{Fredoka-Regular.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\SectionFont{Fredoka-Regular.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\DisplayBold{Fredoka-Bold.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\SansMedium{Fredoka-SemiBold.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\SansSemibold{Fredoka-SemiBold.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\Serif{Nunito-Regular.ttf}[Path=fonts/,
+  ItalicFont=Nunito-Italic.ttf, BoldFont=Nunito-Regular.ttf, Ligatures=TeX]
+\newfontfamily\SerifMedium{Fredoka-Bold.ttf}[Path=fonts/, Ligatures=TeX]
+\newfontfamily\SerifSemibold{Fredoka-SemiBold.ttf}[Path=fonts/, Ligatures=TeX]
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- colour system -----------------------------------------------------
+\usepackage{xcolor}
+\definecolor{PaperBG}{HTML}{FBF6EA}
+\definecolor{PaperWarm}{HTML}{F5E7CF}
+\definecolor{AUnavy}{RGB}{11,35,65}
+\definecolor{AUorange}{RGB}{232,97,0}
+\definecolor{InkSoft}{HTML}{5E6670}
+\definecolor{CrayonBlue}{HTML}{213F73}
+\definecolor{CrayonOrange}{HTML}{F18A3B}
+\definecolor{CrayonGold}{HTML}{F4C35B}
+\definecolor{SkyWash}{HTML}{EAF1F5}
+\definecolor{SketchBorder}{HTML}{B9C7D5}
+\definecolor{WarmLine}{HTML}{DDCDB3}
+\pagecolor{PaperBG}
+\color{AUnavy}
+
+% ----- tagged figures ----------------------------------------------------
+\usepackage{zref-savepos}
+\ExplSyntaxOn
+\box_new:N \l__pfig_box
+\int_new:N \g__pfig_int
+\tl_new:N  \l__pfig_alt_tl
+\cs_generate_variant:Nn \tag_struct_begin:n { e }
+\NewDocumentCommand{\PosterFigure}{mm}{%
+  \leavevmode
+  \tl_set:Ne \l__pfig_alt_tl {#1}%
+  \tag_struct_begin:e { tag=Figure , alt={\tl_to_str:N \l__pfig_alt_tl} }%
+  \tag_mc_begin:n {}%
+  \tag_suspend:n {pfig}%
+  \hbox_set:Nn \l__pfig_box {#2}%
+  \tag_resume:n {pfig}%
+  \int_gincr:N \g__pfig_int
+  \zsavepos { pfig \int_use:N \g__pfig_int }%
+  \tag_struct_gput:ene { \tag_get:n {struct_num} } { attribute }
+    { /O~/Layout~/BBox~[
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  - \box_dp:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposx{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_wd:N \l__pfig_box } ~
+        \dim_to_decimal_in_bp:n { \zposy{pfig\int_use:N\g__pfig_int} sp
+                                  + \box_ht:N \l__pfig_box } ] }%
+  \box_use_drop:N \l__pfig_box
+  \tag_mc_end:
+  \tag_struct_end:
+}
+\ExplSyntaxOff
+
+% ----- links -------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=CrayonBlue, linkcolor=CrayonBlue,
+            pdfdisplaydoctitle=true}
+
+% ----- poster vocabulary -------------------------------------------------
+\newcommand{\CrayonRule}[2]{%
+  \begin{tikzpicture}[baseline=-0.5ex]
+    \draw[#2,line width=2.3pt,line cap=round,opacity=.55] (0,0) -- ++(#1,0);
+    \draw[#2,line width=1.1pt,line cap=round,opacity=.35] (0,0.045) -- ++(#1,0);
+    \draw[#2,line width=.8pt,line cap=round,opacity=.32] (0,-0.045) -- ++(#1,0);
+  \end{tikzpicture}%
+}
+
+\NewDocumentCommand{\PosterSection}{m}{%
+  \par\vspace{0.86em}%
+  {\centering\SectionFont\fontsize{24.4}{30.5}\selectfont\color{AUnavy}%
+   \hspace*{0.08em}\addfontfeatures{LetterSpace=5}\MakeLowercase{#1}\par}%
+  \vspace{0.10em}%
+  {\centering\CrayonRule{0.28\linewidth}{CrayonOrange}\par}%
+  \vspace{0.18em}}
+\newcommand{\auterm}[1]{#1}
+\newcommand{\auhead}[1]{#1}
+\newcommand{\SideBody}{\fontsize{20.7}{28.8}\selectfont}
+\newcommand{\CenterBody}{\fontsize{21.6}{30.0}\selectfont}
+\newcommand{\PosterCaption}{\fontsize{15.9}{21.6}\selectfont}
+\newcommand{\PosterSmall}{\fontsize{17.4}{23.8}\selectfont}
+
+\newcommand{\SketchDivider}{%
+  \par\vspace{0.3em}
+  \noindent\CrayonRule{0.985\textwidth}{CrayonOrange}\par
+}
+
+\newcommand{\BottomCrayons}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \begin{scope}[shift={(current page.south west)},x=1cm,y=1cm,
+                  line cap=round,line join=round]
+      \draw[CrayonBlue,line width=4.2pt,opacity=.16]
+        (3.0,.78) .. controls (14,1.55) and (24,.18) .. (35,1.02)
+        .. controls (48,1.85) and (56,.38) .. (68,1.12)
+        .. controls (82,1.92) and (91,.32) .. (105,1.05)
+        .. controls (111,1.42) and (116,.88) .. (118,1.10);
+      \draw[CrayonOrange,line width=3.2pt,opacity=.14]
+        (4.0,1.42) .. controls (18,.64) and (29,1.72) .. (42,1.08)
+        .. controls (57,.35) and (69,1.75) .. (84,1.02)
+        .. controls (98,.32) and (109,1.48) .. (117,1.00);
+      \foreach \x/\y/\c in {9/1.20/CrayonGold,18/.72/CrayonOrange,
+        29/1.42/CrayonBlue,88/.68/CrayonGold,108/1.48/CrayonOrange} {
+        \begin{scope}[shift={(\x,\y)},scale=.46]
+          \foreach \r in {0,.05,-.05} {
+            \draw[\c,line width=2.0pt,opacity=.32]
+              (-.65,\r) -- (.65,\r);
+            \draw[\c,line width=2.0pt,opacity=.32]
+              (0,-.65+\r) -- (0,.65+\r);
+            \draw[\c,line width=1.5pt,opacity=.25]
+              (-.46,-.46+\r) -- (.46,.46+\r);
+            \draw[\c,line width=1.5pt,opacity=.25]
+              (-.46,.46+\r) -- (.46,-.46+\r);
+          }
+        \end{scope}
+      }
+      \begin{scope}[shift={(98,1.02)},scale=.72]
+        \draw[CrayonBlue,line width=2.1pt,opacity=.28] (0,0) ellipse (1.65 and .54);
+        \draw[CrayonOrange,line width=1.8pt,opacity=.30] (0,0) ellipse (.72 and .25);
+        \draw[CrayonBlue,line width=1.5pt,opacity=.20] (-1.25,.2) .. controls (-.4,.85) and (.4,.85) .. (1.25,.2);
+      \end{scope}
+      \begin{scope}[shift={(33.5,.88)},scale=.58]
+        \draw[CrayonOrange,line width=2.0pt,opacity=.30]
+          (0,0) -- (2.6,0.20) -- (1.15,1.65) -- cycle;
+        \draw[CrayonBlue,line width=1.4pt,opacity=.25]
+          (.28,.18) .. controls (1,.55) and (1.8,.55) .. (2.28,.28);
+      \end{scope}
+    \end{scope}
+  \end{tikzpicture}%
+}
+
+\newcommand{\HeaderLogo}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east] at ([xshift=-3.05cm,yshift=-1.00cm]current page.north east)
+      {\includegraphics[height=8.35cm,alt={Hand-drawn Auburn University logo in navy and orange.}]{auburn-logo-childlike-clean.png}};
+  \end{tikzpicture}%
+}
+
+\newcommand{\ConnectBlock}{%
+  \begin{center}
+  \PosterFigure{Aubie, the Auburn mascot, points toward a QR code linking to Franklin Wang's LinkedIn profile.}{%
+    \begin{tikzpicture}[x=1cm,y=1cm]
+      \path[use as bounding box] (-5.9,-0.15) rectangle (5.95,8.75);
+      \node[anchor=south] at (2.28,0)
+        {\includegraphics[height=8.25cm,alt={Aubie mascot pointing upward.}]{Aubie-paper.png}};
+      \node[anchor=south] at (-2.86,1.55)
+        {\includegraphics[height=4.72cm,alt={QR code linking to Franklin Wang's LinkedIn profile.}]{qr-linkedin.png}};
+      \node[anchor=north,text=AUorange,font=\SansSemibold\fontsize{16}{20}\selectfont]
+        at (-2.86,1.37) {\addfontfeatures{LetterSpace=8}LINKEDIN};
+    \end{tikzpicture}}
+  \end{center}
+}
+
+% ============================  EDIT  ===================================
+\newcommand{\DisplayTitle}{Calabi--Yau Manifolds}
+\newcommand{\TechTitle}{What they are, why they exist, and why they matter}
+\newcommand{\PosterAuthors}{Franklin Wang}
+\newcommand{\PosterDept}{Department of Mathematics and Statistics, Auburn University}
+\newcommand{\Contribution}{One cheap topological test -- $c_1 = 0$ -- buys the richest geometry of all: $\operatorname{Ric} = 0$, guaranteed.}
+\newcommand{\PosterURL}{https://github.com/Franklinwang72/auburn-university-latex-template}
+\newcommand{\PosterURLShort}{github.com/Franklinwang72}
+\newcommand{\PosterQRURL}{https://www.linkedin.com/in/franklin-wang-a14b7b327}
+\newcommand{\PosterContact}{zzw0109@auburn.edu}
+\hypersetup{pdftitle={Calabi-Yau Manifolds - What They Are, Why They Exist, and Why They Matter},
+            pdfauthor={Franklin Wang}}
+% ==========================  end EDIT  =================================
+
+\begin{document}
+
+% =========================  HEADER  ====================================
+\HeaderLogo
+\begin{center}
+  {\TitleFont\fontsize{90}{100}\selectfont \DisplayTitle\par}
+  \vspace{0.15em}
+  {\Serif\itshape\fontsize{31}{39}\selectfont\color{InkSoft} \TechTitle\par}
+  \vspace{0.45em}
+  {\fontsize{24}{31}\selectfont \PosterAuthors\par}
+  {\color{InkSoft}\fontsize{19.5}{27}\selectfont \PosterDept\par}
+\end{center}
+
+\vspace{0.34em}
+{\centering\SansSemibold\fontsize{27.5}{36}\selectfont\color{AUorange}\Contribution\par}
+\SketchDivider
+\vspace{0.24em}
+
+% =========================  BODY  ======================================
+\newlength{\BodyH}\setlength{\BodyH}{49.51cm}
+\begin{minipage}[t][\BodyH][s]{0.285\textwidth}
+\SideBody
+
+% ---------- LEFT: the prerequisites, built up for an undergraduate ----------
+\PosterSection{What Is a Manifold?}
+A \auterm{manifold} is a mathematician's word for a smooth shape --- of
+any dimension. Its one defining trick: up close it looks \auterm{flat},
+the way the ground looks flat from where you stand even though the
+Earth is round. A circle, the skin of a doughnut, the fabric of
+spacetime --- all are manifolds. The number of coordinates you need to
+pin down a point is the \auterm{dimension}, and the shapes here are
+\auterm{compact}: finite and edgeless, closed up like a sphere rather
+than sprawling like an open plain.
+\vfill
+\PosterSection{Complex Dimensions}
+Calabi--Yau manifolds run on \auterm{complex} coordinates. A complex
+number $x + iy$ is a single arrow in the plane --- length and
+direction bundled into one --- so one complex dimension already
+carries two real ones. An $n$-complex-dimensional shape is therefore
+$2n$-real-dimensional: a Calabi--Yau \auterm{threefold} $(n = 3)$ is a
+\auterm{six}-dimensional world. Complex coordinates also unlock the
+rigid, powerful toolbox of complex analysis.
+\vfill
+\PosterSection{The Family Album}
+One dimension up sit the celebrated \auterm{K3 surfaces}; in dimension
+three, the \auterm{quintic}. A shape cut out by one degree-$d$
+equation in complex projective space $\mathbb{P}^{n+1}$ is
+Calabi--Yau exactly when $d = n+2$:
+\begin{center}
+\PosterSmall
+\tagpdfsetup{table/header-rows={1}}%
+\begin{tabular}{c l l}
+  \toprule
+  \auhead{dim} & \auhead{Calabi--Yau} & \auhead{why $K_X \cong \mathcal{O}_X$} \\
+  \midrule
+  $1$ & elliptic curve $\mathbb{C}/\Lambda$ & $dz$ descends \\
+  $2$ & K3 surface, e.g.\ $X_4 \subset \mathbb{P}^3$ & $4 = 2+2$ \\
+  $3$ & quintic $X_5 \subset \mathbb{P}^4$ & $5 = 3+2$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\vspace{0.05em}
+The quintic alone moves in a $101$-parameter family of Ricci-flat
+worlds.
+\vfill
+\PosterSection{Curvature: Do Triangles Behave?}
+How can you tell a surface is curved without stepping outside it? Draw
+a triangle. On a \auterm{sphere} its angles sum to \auterm{more} than
+$180^\circ$; on a \auterm{saddle}, to \auterm{less}; only on a
+\auterm{flat} sheet do they hit $180^\circ$ exactly. An ant that never
+leaves the surface could discover its world is round this way ---
+curvature is \auterm{intrinsic}, and it can change from point to point.
+\begin{center}
+\PosterFigure{Three small surfaces in a row: a blue sphere with a triangle of
+  three outward-bulging arcs, a flat gray sheet with a straight-edged triangle,
+  and an orange saddle surface with a triangle whose sides pinch inward.}{%
+  \includegraphics[width=0.92\textwidth]{figures/curvature-trio.png}}
+\par\vspace{0.1em}
+{\PosterCaption\color{InkSoft}
+Sphere: more than $180^\circ$ \textperiodcentered\;
+flat sheet: exactly $180^\circ$ \textperiodcentered\;
+saddle: less than $180^\circ$.\par}
+\end{center}
+\vfill
+\PosterSection{Ricci Curvature}
+Past two dimensions, curvature splits into many independent pieces.
+The \auterm{Ricci curvature} is the piece that controls \auterm{volume}.
+Sprinkle a tiny ball of dust and let each speck drift along a straight
+line: on a sphere the ball shrinks, on a saddle it swells, and when
+$\operatorname{Ric} = 0$ it holds its volume exactly. Such a space is
+genuinely curved yet volume-balanced --- which is precisely Einstein's
+equation for a spacetime with no matter. \auterm{Ricci-flat spaces are
+gravity's vacuums.}
+
+\end{minipage}\hfill
+%
+\begin{minipage}[t][\BodyH][s]{0.37\textwidth}
+\CenterBody
+
+% ---------- CENTER: the definition, the theorem, the picture ----------
+\PosterSection{What Is a Calabi--Yau Manifold?}
+A \auterm{Calabi--Yau manifold} is a compact complex manifold with two
+features. \auterm{(1) K\"ahler:} it carries both a way to measure
+distance --- a metric --- and complex coordinates, fitting together as
+smoothly as possible. \auterm{(2) A holomorphic volume form} $\Omega$:
+a way to gauge complex volume, built from the coordinates, that
+vanishes {\Serif\itshape nowhere} (in bundle language, a trivial canonical
+bundle $K_X \cong \mathcal{O}_X$). Feature (2) forces a purely
+\auterm{topological} quantity to vanish --- the \auterm{first Chern
+class} $c_1(X)$, a single whole-number invariant of the shape you can
+compute without measuring anything. Calabi asked whether that cheap
+test forces a Ricci-flat metric to exist.
+\par\vspace{0.2em}
+{\setlength{\fboxrule}{1.6pt}\setlength{\fboxsep}{0pt}%
+\fcolorbox{SketchBorder}{SkyWash}{\begin{minipage}{\dimexpr\textwidth-3.2pt}
+  \vspace{0.65em}\begin{center}\begin{minipage}{\dimexpr\textwidth-3.4em}
+  {\Serif\itshape\fontsize{24}{30}\selectfont\color{AUorange}%
+   Theorem\ (Yau 1978 --- the Calabi conjecture)\par}
+  \vspace{0.35em}
+  {\Serif\fontsize{27.5}{38}\selectfont\color{AUnavy}
+  Let $(X,\omega)$ be a compact K\"ahler manifold with
+  $c_1(X) = 0$ in $H^2(X,\mathbb{R})$. Then $X$ carries a
+  \textit{unique} Ricci-flat K\"ahler metric $\tilde\omega$ with
+  $[\tilde\omega] = [\omega]$:
+  {\fontsize{35}{41}\selectfont
+  \begin{equation*}
+    \operatorname{Ric}(\tilde\omega) \;=\; 0 .
+  \end{equation*}}
+  Every Calabi--Yau manifold admits Ricci-flat metrics ---
+  exactly one in each K\"ahler class.\par}
+  \end{minipage}\end{center}\vspace{0.65em}
+\end{minipage}}}
+\vfill
+\auterm{How is it proved?}\ Fix an overall scale; every candidate
+metric is then $\omega + i\,\partial\bar\partial\varphi$ for a single
+function $\varphi$, and Ricci-flatness becomes one nonlinear PDE ---
+the \auterm{complex Monge--Amp\`ere equation}
+{\fontsize{26}{31}\selectfont
+\begin{equation*}
+  \bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{\,n}
+  \;=\; e^{F}\,\omega^{n}
+\end{equation*}}
+--- whose unknown sits inside a determinant of its own second
+derivatives. Yau's a~priori estimates force a solution to exist.
+\vfill
+\begin{center}
+\PosterFigure{A three-quarter view of a complex-curve slice of the
+  Fermat quintic Calabi-Yau threefold: interlocking petal-like sheets
+  that flow from Auburn orange through pale gray to deep navy, with
+  a fivefold pinwheel symmetry and a glossy finish.}{%
+  \includegraphics[width=0.44\textwidth]{figures/calabi-yau-quintic.png}}
+\par\vspace{0.2em}
+\begin{minipage}{0.64\textwidth}
+{\PosterCaption\color{InkSoft}
+A Calabi--Yau threefold has six real dimensions --- too many to draw,
+but not too many to slice. Shown: the surface $z_1^5+z_2^5=1$, a
+complex curve inside the Fermat quintic
+$\,z_0^5+\dots+z_4^5=0\,$ in $\mathbb{P}^4$, projected to $3$-space;
+its $25$ patches carry the standard Hanson parametrization.\par}
+\end{minipage}
+\end{center}
+
+\end{minipage}\hfill
+%
+\begin{minipage}[t][\BodyH][s]{0.285\textwidth}
+\SideBody
+
+% ---------- RIGHT: examples a lay reader can hold, then the payoff ----------
+\PosterSection{The Simplest One: A Donut}
+In one complex dimension the definition selects exactly one shape: the
+torus $\mathbb{C}/\Lambda$, the surface of a donut. Its volume form is
+$dz$, inherited from the plane, and its Ricci-flat metric is the flat
+geometry a sheet of paper keeps when rolled up in two directions ---
+everything Yau's theorem promises, visible by hand.
+\begin{center}
+\PosterFigure{A glossy navy torus, the surface of a donut, with one
+  vertical circle around the tube and one horizontal circle around
+  the hole drawn in deep navy: the two directions in which the flat
+  sheet was rolled up.}{%
+  \includegraphics[width=0.28\textwidth]{figures/cy-torus.png}}
+\par\vspace{0.1em}
+{\PosterCaption\color{InkSoft}
+The torus: a flat sheet rolled up in two directions.\par}
+\end{center}
+\vfill
+\PosterSection{Six Hidden Dimensions}
+String theory needs spacetime to have \auterm{ten} dimensions --- four
+we see, six curled up too small to notice. In 1985 Candelas, Horowitz,
+Strominger and Witten showed that when the hidden six form a
+Calabi--Yau threefold, the physics left in four dimensions keeps
+supersymmetry, with Yau's Ricci-flat metric as its vacuum. If string
+theory is right, a shape like the one at the centre of this poster
+sits at every point of space.
+\vfill
+\PosterSection{A Shape and Its Mirror}
+Calabi--Yau threefolds come in pairs: each $X$ has a \auterm{mirror}
+$X^{\vee}$ with its two ``shape numbers'' swapped --- one counts ways
+to resize the shape, the other ways to deform it. String theory cannot
+tell the pair apart, and in 1991 Candelas--de~la~Ossa--Green--Parkes
+used this to count rational curves on the quintic ($2875$ lines,
+$609{,}250$ conics) by an integral on the mirror.
+\vfill
+\PosterSection{Takeaway}
+{\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000
+A Calabi--Yau manifold passes one topological test, $c_1 = 0$ ---
+and Yau's theorem rewards it with perfect geometry,
+$\operatorname{Ric} = 0$: the meeting point of analysis, algebra, and
+physics.\par}
+\vfill
+\PosterSection{Let's Be Friends}
+\ConnectBlock
+
+\end{minipage}
+
+\vspace*{\fill}
+
+% =========================  FOOTER  ====================================
+{\color{WarmLine}\rule{\textwidth}{1.2pt}}
+\vspace{0.46em}
+
+\begin{center}
+\begin{minipage}[c]{0.86\textwidth}
+  \centering\fontsize{17}{23}\selectfont\color{InkSoft}
+  References:\;
+  E.~Calabi, Proc.\ ICM 1954 \textperiodcentered\;
+  S.-T.~Yau, Comm.\ Pure Appl.\ Math.\ 31 (1978) \textperiodcentered\;
+  P.~Candelas, X.~de~la~Ossa, P.~Green, L.~Parkes, Nucl.\ Phys.\ B 359 (1991) \textperiodcentered\;
+  D.~Huybrechts, Complex Geometry, Springer, 2005.\\
+  Let's be friends:\; \href{mailto:\PosterContact}{\PosterContact}\quad
+  Template:\; \href{\PosterURL}{\PosterURLShort}\quad
+  Set in Fredoka, Nunito, and STIX Two Math.
+  \par
+\end{minipage}
+\end{center}
+
+\BottomCrayons
+
+\end{document}
