@@ -3,7 +3,7 @@
 %
 %  One idea per slide. Giant type, tight leading, oceans of dark stage.
 %  A single family (Source Sans 3, the open cousin of Apple's Myriad),
-%  two weights. Auburn navy as a stage gradient; Auburn orange spent
+%  two weights. A white stage in Auburn ink; Auburn orange spent
 %  only on the few numbers and the one equation that matter. No
 %  bullets, no frame titles, no page numbers, no chrome; the logo
 %  appears on the first and last slide only.
@@ -38,27 +38,20 @@
 \setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
 \setoperatorfont\symup
 
-% ----- the stage: Auburn navy, lit from above ----------------------------
+% ----- the stage: white light, Auburn ink --------------------------------
 \usepackage{qrcode}
 \usepackage{tikz}
-\usetikzlibrary{fadings}
-\begin{tikzfadingfrompicture}[name=stage glow]
-  \shade[inner color=transparent!0,outer color=transparent!100]
-    (0,0) circle (1);
-\end{tikzfadingfrompicture}
-\definecolor{StageTop}{RGB}{21,45,79}     % navy, where the light falls
-\definecolor{StageDeep}{RGB}{6,13,26}     % the dark floor of the stage
-\definecolor{Ink}{RGB}{243,246,250}       % the words (15:1 on the stage)
-\definecolor{Quiet}{RGB}{148,161,178}     % kickers, afterthoughts (6:1)
-\definecolor{AUorange}{RGB}{232,119,34}   % spent only where it counts
+\definecolor{StageTop}{RGB}{253,254,255}  % white, where the light falls
+\definecolor{StageDeep}{RGB}{243,246,250} % the faintest cool floor
+\definecolor{Ink}{RGB}{12,35,64}          % Auburn navy (14.9:1)
+\definecolor{Quiet}{RGB}{106,117,132}     % kickers, afterthoughts (5.2:1)
+\definecolor{AUorange}{RGB}{232,97,0}     % spent only where it counts
 
 \setbeamertemplate{background canvas}{%
   \begin{tikzpicture}
     \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
     \shade[top color=StageTop, bottom color=StageDeep]
       (0,0) rectangle (\paperwidth,\paperheight);
-    \fill[StageTop!72!white, path fading=stage glow, opacity=0.13]
-      (0.5\paperwidth, 1.02\paperheight) ellipse (0.62\paperwidth and 0.5\paperheight);
   \end{tikzpicture}}
 
 % ----- no chrome ----------------------------------------------------------
@@ -124,17 +117,15 @@
 
 \newcommand{\CYclosingframe}[3]{%
   \begin{frame}[plain]
-    \vspace{0.16\paperheight}
-    {\centering\KeynoteSemibold\fontsize{30}{36}\selectfont\color{Ink}
-     Thank you.\par}
-    \vspace{1.6em}
+    \vspace{0.15\paperheight}
+    {\centering\KeynoteSemibold\fontsize{26}{32}\selectfont\color{Ink}
+     \inserttitle\par}
+    \vspace{1.1em}
     {\centering\KeynoteLight\fontsize{12}{15}\selectfont\color{Quiet}
-     #3\par}
-    \vspace{1.6em}
-    % QR on a small white card: inverted codes scan poorly on dark
-    {\centering
-     {\setlength{\fboxsep}{5pt}\colorbox{white}{\begingroup
-       \hypersetup{urlcolor=StageDeep}\qrcode[height=0.135\paperheight]{#1}\endgroup}}\par}
+     \insertauthor\, · \,#3\par}
+    \vspace{1.8em}
+    {\centering\begingroup
+       \hypersetup{urlcolor=Ink}\qrcode[height=0.145\paperheight]{#1}\endgroup\par}
     \vspace{0.7em}
     {\centering\KeynoteLight\fontsize{9.5}{12}\selectfont\color{Quiet}#2\par}
     \vfill

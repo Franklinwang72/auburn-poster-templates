@@ -1,11 +1,11 @@
-"""All three Calabi-Yau figures in the DEEP-SPACE (dark-ground) palette.
+"""All three Calabi-Yau figures in the Auburn navy/orange palette.
 
 Reproduces figures/calabi-yau-quintic.png, figures/curvature-trio.png,
-and figures/cy-torus.png for the deep-space poster: every surface tone
-is lifted above the page ink #090F20 so the figures glow on the dark
-ground, and all drawn-on lines (geodesic triangles, torus circles) are
-star gold with a deep-space casing instead of navy with a white one.
+and figures/cy-torus.png for the navy-and-orange posters.
 Run from the folder root:  python3 figures/make-figures.py
+
+Same geometry as the paper-white "One" poster set; only the palette
+differs: Auburn navy #0B2341, one orange accent #E86100, white ground.
 """
 import numpy as np
 import matplotlib
@@ -19,9 +19,8 @@ def rgb(h):
     return np.array([int(h[i:i+2], 16) / 255 for i in (1, 3, 5)])
 
 WHITE = np.array([1.0, 1.0, 1.0])
-SPACE = rgb("#0A1124")   # line casing: the page ink itself
-GOLD = rgb("#F2C96D")    # star-gold line work
 NAVY = rgb("#0B2341")
+ORANGE = rgb("#E86100")
 
 def crop(path, pad=24):
     img = mpimg.imread(path)
@@ -34,9 +33,9 @@ def crop(path, pad=24):
 # ======================================================================
 # 1. Hero: Hanson quintic slice, height gradient navy -> cream -> orange
 # ======================================================================
-CMAP = LinearSegmentedColormap.from_list("space", [
-    rgb("#22386B"), rgb("#2C4A80"), rgb("#3E6E9E"), rgb("#6FA3BD"),
-    rgb("#C3D5E2"), rgb("#F2E6C8"), rgb("#F0B85C")])
+CMAP = LinearSegmentedColormap.from_list("au", [
+    rgb("#081D38"), rgb("#0B2341"), rgb("#31517A"), rgb("#7E94AD"),
+    rgb("#CBD4DD"), rgb("#F0E2CE"), rgb("#E88A3C")])
 
 N, ALPHA, NU = 5, 0.30*np.pi, 90
 ELEV, AZIM, HAX = 30, 35, 2
@@ -113,9 +112,9 @@ def shade(base, X, Y, Z, elev, azim):
     return np.clip(base*s + WHITE*0.10*(1-s), 0, 1)
 
 def cased(ax, x, y, z):
-    ax.plot(x, y, z, color=SPACE, lw=8, zorder=9,
+    ax.plot(x, y, z, color=WHITE, lw=8, zorder=9,
             solid_capstyle="round", solid_joinstyle="round")
-    ax.plot(x, y, z, color=GOLD, lw=3.4, zorder=10,
+    ax.plot(x, y, z, color=NAVY, lw=3.4, zorder=10,
             solid_capstyle="round", solid_joinstyle="round")
 
 def slerp(a, b, t):
@@ -129,7 +128,7 @@ ax = fig.add_subplot(131, projection="3d")
 ax.computed_zorder = False
 uu, vv = np.meshgrid(np.linspace(0, 2*np.pi, 80), np.linspace(0, np.pi, 60))
 X, Y, Z = np.cos(uu)*np.sin(vv), np.sin(uu)*np.sin(vv), np.cos(vv)
-ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#6D8FBC"), X, Y, Z, 18, -50),
+ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#54749B"), X, Y, Z, 18, -50),
                 rstride=1, cstride=1, linewidth=0, antialiased=True, zorder=1)
 t = np.linspace(0, 1, 60)
 A, B, C = np.array([0, 0, 1.0]), np.array([1.0, 0, 0]), np.array([0, -1.0, 0])
@@ -143,7 +142,7 @@ ax = fig.add_subplot(132, projection="3d")
 ax.computed_zorder = False
 g = np.linspace(-1, 1, 24)
 X, Y = np.meshgrid(g, g); Z = 0*X
-ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#B7C1D2"), X, Y, Z, 32, -60),
+ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#AFB8C2"), X, Y, Z, 32, -60),
                 rstride=1, cstride=1, linewidth=0, antialiased=True, zorder=1)
 tri = np.array([[-0.62, -0.5], [0.72, -0.38], [0.0, 0.66], [-0.62, -0.5]])
 cased(ax, tri[:, 0], tri[:, 1], tri[:, 0]*0 + 0.012)
@@ -154,7 +153,7 @@ ax = fig.add_subplot(133, projection="3d")
 ax.computed_zorder = False
 g = np.linspace(-1, 1, 60)
 X, Y = np.meshgrid(g, g); Z = 0.55*(X**2 - Y**2)
-ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#E2A45E"), X, Y, Z, 24, -55),
+ax.plot_surface(X, Y, Z, facecolors=shade(rgb("#E39A5F"), X, Y, Z, 24, -55),
                 rstride=1, cstride=1, linewidth=0, antialiased=True, zorder=1)
 pts = np.array([[-0.62, -0.45], [0.7, -0.5], [0.05, 0.62]])
 for i in range(3):
@@ -175,7 +174,7 @@ crop("figures/curvature-trio.png", pad=20)
 # ======================================================================
 # 3. Torus: glossy slate blue, meridian + parallel in navy
 # ======================================================================
-BASE = rgb("#6D8FBC")
+BASE = rgb("#54749B")
 R, r = 1.0, 0.42
 NUt, NVt = 160, 90
 ELEVt, AZIMt = 34, -62
@@ -232,7 +231,7 @@ ax.add_collection3d(Poly3DCollection([quads[i] for i in order],
 for kind, c0 in (("meridian", np.radians(-62)), ("parallel", 0.55)):
     pts, vis = circle_pts(kind, c0)
     ptsv = pts.copy(); ptsv[~vis] = np.nan
-    ax.plot(ptsv[:, 0], ptsv[:, 1], ptsv[:, 2], color=GOLD, lw=2.8, zorder=10)
+    ax.plot(ptsv[:, 0], ptsv[:, 1], ptsv[:, 2], color=NAVY, lw=2.8, zorder=10)
 m = R + r + 0.1
 ax.set_xlim(-m, m); ax.set_ylim(-m, m); ax.set_zlim(-m*0.7, m*0.7)
 ax.set_box_aspect((1, 1, 0.7)); ax.view_init(elev=ELEVt, azim=AZIMt)
