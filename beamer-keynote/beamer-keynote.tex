@@ -1,0 +1,144 @@
+% ======================================================================
+%  beamer-keynote.tex -- START HERE. One idea per slide; the theme
+%  (beamerthemeAUkeynote.sty) does everything else.
+%
+%  A frame is one of:
+%    \statement{...}  [+ \substatement{...}]  [after a \kicker{...}]
+%    \bignum{101}{caption}
+%    \heroimage{figures/...}
+%    \bigequation{...}
+%
+%  COMPILE WITH LuaLaTeX:   latexmk    (Overleaf: Menu -> Compiler -> LuaLaTeX)
+% ======================================================================
+\documentclass[aspectratio=169]{beamer}
+\usetheme{AUkeynote}
+
+\title{Calabi–Yau Manifolds}
+\subtitle{What they are, why they exist, and why they matter}
+\author{Franklin Wang\, · \,Auburn University}
+
+\begin{document}
+
+\CYtitleframe
+
+% ---- the idea in one line --------------------------------------------
+\begin{frame}[plain]
+  \statement{One cheap topological test buys\\the richest geometry of all.}
+  \substatement{$c_1 = 0 \;\Longrightarrow\; \operatorname{Ric} = 0$, guaranteed.}
+\end{frame}
+
+% ---- manifolds ---------------------------------------------------------
+\begin{frame}[plain]
+  \kicker{What is a manifold?}
+  \statement{A smooth shape. Any dimension.}
+\end{frame}
+
+\begin{frame}[plain]
+  \statement{Up close, it looks flat.}
+  \substatement{The Earth looks flat from where you stand.}
+\end{frame}
+
+% ---- complex dimensions ------------------------------------------------
+\begin{frame}[plain]
+  \kicker{Complex dimensions}
+  \statement{One complex dimension\\carries two real ones.}
+\end{frame}
+
+\begin{frame}[plain]
+  \bignum{6}{real dimensions in a Calabi–Yau threefold $(n = 3)$}
+\end{frame}
+
+% ---- curvature ---------------------------------------------------------
+\begin{frame}[plain]
+  \kicker{Curvature}
+  \statementsmall{Draw a triangle. Add the angles.}
+  \vspace{1.2em}
+  \heroimage[0.40\paperheight]{figures/curvature-trio.png}
+  \substatement{Sphere: more than $180^\circ$ \,·\, flat: exactly $180^\circ$ \,·\, saddle: less}
+\end{frame}
+
+\begin{frame}[plain]
+  \statement{Curvature is intrinsic.}
+  \substatement{An ant that never leaves the surface\\could discover its world is round.}
+\end{frame}
+
+\begin{frame}[plain]
+  \kicker{Ricci curvature}
+  \statement{Ricci curvature controls volume.}
+  \substatement{$\operatorname{Ric} = 0$: curved, yet volume-balanced — gravity's vacuum.}
+\end{frame}
+
+% ---- the definition ----------------------------------------------------
+\begin{frame}[plain]
+  \kicker{The definition}
+  \statement{Compact. Kähler.\\A volume form that never vanishes.}
+  \substatement{A trivial canonical bundle forces $c_1(X) = 0$ — one whole number, free to compute.}
+\end{frame}
+
+\begin{frame}[plain]
+  \statement{Does $c_1 = 0$ force\\a Ricci-flat metric?}
+  \substatement{Calabi's question, 1954.}
+\end{frame}
+
+% ---- the theorem -------------------------------------------------------
+\begin{frame}[plain]
+  \kicker{Yau, 1978 — the Calabi conjecture}
+  \bigequation{\operatorname{Ric}(\tilde\omega) \;=\; 0}
+  \substatement{A unique Ricci-flat metric — one in every Kähler class.}
+\end{frame}
+
+\begin{frame}[plain]
+  \kicker{How?}
+  \statementsmall{Everything reduces to one equation.}
+  \vspace{0.9em}
+  {\centering\color{Ink}\fontsize{23}{29}\selectfont
+   $\bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{n} = e^{F}\omega^{n}$\par}
+  \substatement{The complex Monge–Ampère equation, solved by a priori estimates.}
+\end{frame}
+
+% ---- see one -----------------------------------------------------------
+\begin{frame}[plain]
+  \heroimage[0.74\paperheight]{figures/calabi-yau-quintic.png}
+  \substatement{A slice of the Fermat quintic, $z_1^5 + z_2^5 = 1$.}
+\end{frame}
+
+\begin{frame}[plain]
+  \kicker{The simplest one}
+  \heroimage[0.46\paperheight]{figures/cy-torus.png}
+  \substatement{A donut: a flat sheet, rolled up in two directions.}
+\end{frame}
+
+% ---- the family --------------------------------------------------------
+\begin{frame}[plain]
+  \kicker{The family album}
+  \statement{$d = n + 2$}
+  \substatement{elliptic curve \,·\, K3 surface \,·\, the quintic}
+\end{frame}
+
+\begin{frame}[plain]
+  \bignum{101}{parameters in the quintic's family of Ricci-flat worlds}
+\end{frame}
+
+% ---- physics -----------------------------------------------------------
+\begin{frame}[plain]
+  \kicker{String theory}
+  \statement{Ten dimensions. Four we see.}
+  \substatement{The hidden six form a Calabi–Yau. \,(Candelas–Horowitz–Strominger–Witten, 1985)}
+\end{frame}
+
+\begin{frame}[plain]
+  \kicker{Mirror symmetry}
+  \statement{Every shape has a mirror.}
+  \substatement{$2875$ lines and $609{,}250$ conics on the quintic — counted on its mirror, 1991.}
+\end{frame}
+
+% ---- takeaway ----------------------------------------------------------
+\begin{frame}[plain]
+  \statement{One test. Perfect geometry.}
+  \substatement{$c_1 = 0 \;\Longrightarrow\; \operatorname{Ric} = 0$ — where analysis, algebra, and physics meet.}
+\end{frame}
+
+\CYclosingframe{https://www.linkedin.com/in/franklin-wang-a14b7b327}%
+  {Connect on LinkedIn}{zzw0109@auburn.edu}
+
+\end{document}

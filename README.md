@@ -5,7 +5,7 @@
 <h1 align="center">Auburn Poster Templates</h1>
 
 <p align="center">
-    <em>Nineteen research-poster themes. Pick one, paste your paper, compile.</em>
+    <em>Nineteen poster themes and a keynote deck. Pick one, paste your paper, compile.</em>
 </p>
 
 <p align="center">
@@ -14,10 +14,10 @@
   </a>
   <img alt="LuaLaTeX" src="https://img.shields.io/badge/-LuaLaTeX-008080?style=flat-square&logo=latex&logoColor=white" />
   <img alt="PDF/UA-1" src="https://img.shields.io/badge/-PDF%2FUA--1-1f6feb?style=flat-square" />
-  <img alt="19 themes" src="https://img.shields.io/badge/-19%20themes-2da44e?style=flat-square" />
+  <img alt="20 templates" src="https://img.shields.io/badge/-20%20templates-2da44e?style=flat-square" />
 </p>
 
-Self-contained 47 × 28 in LaTeX posters, compiled with **LuaLaTeX** to tagged, accessible (**PDF/UA-1**) PDFs — fonts bundled. The demo content is a placeholder for your own.
+Self-contained 47 × 28 in LaTeX posters — plus a beamer keynote — compiled with **LuaLaTeX**; the posters are tagged, accessible (**PDF/UA-1**) PDFs, fonts bundled. The demo content is a placeholder for your own.
 
 ## Gallery
 
@@ -96,6 +96,13 @@ Self-contained 47 × 28 in LaTeX posters, compiled with **LuaLaTeX** to tagged, 
 </tr>
 </table>
 
+
+### Slides
+
+<p align="center">
+<a href="beamer-keynote/"><img src="previews/beamer-keynote.jpg" width="72%"></a><br>
+<sub><b>beamer-keynote</b></sub>
+</p>
 
 ## Usage
 

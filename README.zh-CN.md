@@ -5,7 +5,7 @@
 <h1 align="center">奥本大学科研海报模板</h1>
 
 <p align="center">
-    <em>十九款科研海报主题:挑一款,粘贴你的论文,直接编译。</em>
+    <em>十九款海报主题加一套演示模板:挑一款,粘贴你的论文,直接编译。</em>
 </p>
 
 <p align="center">
@@ -14,10 +14,10 @@
   </a>
   <img alt="LuaLaTeX" src="https://img.shields.io/badge/-LuaLaTeX-008080?style=flat-square&logo=latex&logoColor=white" />
   <img alt="PDF/UA-1" src="https://img.shields.io/badge/-PDF%2FUA--1-1f6feb?style=flat-square" />
-  <img alt="19 themes" src="https://img.shields.io/badge/-19%20themes-2da44e?style=flat-square" />
+  <img alt="20 templates" src="https://img.shields.io/badge/-20%20templates-2da44e?style=flat-square" />
 </p>
 
-自包含的 47 × 28 英寸 LaTeX 海报,**LuaLaTeX** 编译,输出带标签的无障碍(**PDF/UA-1**)PDF,字体已随附。示例内容为占位,请换成你自己的。
+自包含的 47 × 28 英寸 LaTeX 海报,外加一套 beamer 演示模板,**LuaLaTeX** 编译;海报输出带标签的无障碍(**PDF/UA-1**)PDF,字体已随附。示例内容为占位,请换成你自己的。
 
 ## 画廊
 
@@ -96,6 +96,13 @@
 </tr>
 </table>
 
+
+### 幻灯片
+
+<p align="center">
+<a href="beamer-keynote/"><img src="previews/beamer-keynote.jpg" width="72%"></a><br>
+<sub><b>beamer-keynote</b></sub>
+</p>
 
 ## 用法
 

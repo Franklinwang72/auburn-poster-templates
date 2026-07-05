@@ -1,0 +1,146 @@
+% ======================================================================
+%  beamerthemeAUkeynote -- an Auburn keynote, the way Jobs would cut it.
+%
+%  One idea per slide. Giant type, tight leading, oceans of dark stage.
+%  A single family (Source Sans 3, the open cousin of Apple's Myriad),
+%  two weights. Auburn navy as a stage gradient; Auburn orange spent
+%  only on the few numbers and the one equation that matter. No
+%  bullets, no frame titles, no page numbers, no chrome; the logo
+%  appears on the first and last slide only.
+%
+%  Slide vocabulary (all a frame ever needs):
+%    \kicker{...}                small gray eyebrow line
+%    \statement{...}             the one big sentence
+%    \substatement{...}          quiet gray afterthought
+%    \bignum{101}{caption}       a number as the whole slide
+%    \heroimage[h]{file}         one centered image
+%    \CYtitleframe  \CYclosingframe{qr-url}{label}
+%
+%  Compile with LuaLaTeX. (beamer cannot produce tagged PDF/UA -- this
+%  deck is accessible-by-design instead: contrast, structure, fonts.)
+% ======================================================================
+\mode<presentation>
+
+% ----- one family, two weights + real math ------------------------------
+\usefonttheme{professionalfonts}
+\usepackage{fontspec}
+\setmainfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Semibold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\setsansfont{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, BoldFont=*-Semibold,
+  ItalicFont=*-It,       BoldItalicFont=*-BoldIt]
+\newfontfamily\KeynoteLight{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Regular, Ligatures=TeX]
+\newfontfamily\KeynoteSemibold{SourceSans3}[Path=fonts/, Extension=.otf,
+  UprightFont=*-Semibold, Ligatures=TeX]
+\usepackage{unicode-math}
+\setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
+\setoperatorfont\symup
+
+% ----- the stage: Auburn navy, lit from above ----------------------------
+\usepackage{qrcode}
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+\begin{tikzfadingfrompicture}[name=stage glow]
+  \shade[inner color=transparent!0,outer color=transparent!100]
+    (0,0) circle (1);
+\end{tikzfadingfrompicture}
+\definecolor{StageTop}{RGB}{21,45,79}     % navy, where the light falls
+\definecolor{StageDeep}{RGB}{6,13,26}     % the dark floor of the stage
+\definecolor{Ink}{RGB}{243,246,250}       % the words (15:1 on the stage)
+\definecolor{Quiet}{RGB}{148,161,178}     % kickers, afterthoughts (6:1)
+\definecolor{AUorange}{RGB}{232,119,34}   % spent only where it counts
+
+\setbeamertemplate{background canvas}{%
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle (\paperwidth,\paperheight);
+    \shade[top color=StageTop, bottom color=StageDeep]
+      (0,0) rectangle (\paperwidth,\paperheight);
+    \fill[StageTop!72!white, path fading=stage glow, opacity=0.13]
+      (0.5\paperwidth, 1.02\paperheight) ellipse (0.62\paperwidth and 0.5\paperheight);
+  \end{tikzpicture}}
+
+% ----- no chrome ----------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{headline}{}
+\setbeamercolor{normal text}{fg=Ink}
+\setbeamercolor{structure}{fg=Ink}
+\setbeamercolor{itemize item}{fg=AUorange}
+\setbeamertemplate{itemize item}{\raisebox{0.12em}{\rule{0.35em}{0.12em}}}
+\setbeamersize{text margin left=1.35cm, text margin right=1.35cm}
+\hypersetup{colorlinks=true, urlcolor=Quiet, linkcolor=Ink}
+
+% ----- the slide vocabulary ----------------------------------------------
+% small gray eyebrow line above a statement
+\newcommand{\kicker}[1]{%
+  {\centering\KeynoteLight\fontsize{10.5}{13}\selectfont
+   \color{Quiet}#1\par}\vspace{0.9em}}
+% the one big sentence (tight leading, semibold, near-white)
+\newcommand{\statement}[1]{%
+  {\centering\KeynoteSemibold\fontsize{25}{31}\selectfont
+   \color{Ink}#1\par}}
+% a slightly smaller statement, for two-beat slides
+\newcommand{\statementsmall}[1]{%
+  {\centering\KeynoteSemibold\fontsize{19}{24}\selectfont
+   \color{Ink}#1\par}}
+% quiet gray afterthought under a statement
+\newcommand{\substatement}[1]{%
+  \vspace{1.1em}%
+  {\centering\KeynoteLight\fontsize{12.5}{16}\selectfont
+   \color{Quiet}#1\par}}
+% a number as the whole slide
+\newcommand{\bignum}[2]{%
+  {\centering\KeynoteSemibold\fontsize{92}{96}\selectfont
+   \color{AUorange}#1\par}%
+  \vspace{0.55em}%
+  {\centering\KeynoteLight\fontsize{13}{17}\selectfont
+   \color{Quiet}#2\par}}
+% one centered image; optional height (default 0.62\paperheight)
+\newcommand{\heroimage}[2][0.62\paperheight]{%
+  {\centering\includegraphics[height=#1]{#2}\par}}
+% the one display equation, in the one colour that matters
+\newcommand{\bigequation}[1]{%
+  {\centering\color{AUorange}\fontsize{34}{40}\selectfont
+   $\displaystyle #1$\par}}
+
+% ----- title and closing frames ------------------------------------------
+\newcommand{\CYtitleframe}{%
+  \begin{frame}[plain]
+    \vspace{0.14\paperheight}
+    {\centering\KeynoteSemibold\fontsize{33}{38}\selectfont\color{Ink}
+     \inserttitle\par}
+    \vspace{0.9em}
+    {\centering\KeynoteLight\fontsize{13.5}{17}\selectfont\color{Quiet}
+     \insertsubtitle\par}
+    \vspace{2.1em}
+    {\centering\KeynoteLight\fontsize{12}{15}\selectfont\color{Ink!82!Quiet}
+     \insertauthor\par}
+    \vfill
+    {\centering\includegraphics[height=0.085\paperheight]{auburn-logo-color-cropped.png}\par}
+    \vspace{0.05\paperheight}
+  \end{frame}}
+
+\newcommand{\CYclosingframe}[3]{%
+  \begin{frame}[plain]
+    \vspace{0.16\paperheight}
+    {\centering\KeynoteSemibold\fontsize{30}{36}\selectfont\color{Ink}
+     Thank you.\par}
+    \vspace{1.6em}
+    {\centering\KeynoteLight\fontsize{12}{15}\selectfont\color{Quiet}
+     #3\par}
+    \vspace{1.6em}
+    % QR on a small white card: inverted codes scan poorly on dark
+    {\centering
+     {\setlength{\fboxsep}{5pt}\colorbox{white}{\begingroup
+       \hypersetup{urlcolor=StageDeep}\qrcode[height=0.135\paperheight]{#1}\endgroup}}\par}
+    \vspace{0.7em}
+    {\centering\KeynoteLight\fontsize{9.5}{12}\selectfont\color{Quiet}#2\par}
+    \vfill
+    {\centering\includegraphics[height=0.075\paperheight]{auburn-logo-color-cropped.png}\par}
+    \vspace{0.045\paperheight}
+  \end{frame}}
+
+\mode<all>
+\endinput
