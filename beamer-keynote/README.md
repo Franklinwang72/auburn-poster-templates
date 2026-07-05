@@ -10,17 +10,19 @@ Upload this folder (New Project → Upload Project) → **Menu → Compiler → 
 
 ## Write your talk
 
-`beamer-keynote.tex` is only your slides — the look lives in `beamerthemeAUkeynote.sty`. One idea per frame:
+`beamer-keynote.tex` is only your slides — the look lives in `beamerthemeAUkeynote.sty`. It is standard beamer:
 
 ```latex
-\begin{frame}[plain]
-  \kicker{small gray line above}
-  \statement{The one big sentence.}
-  \substatement{a quiet afterthought}
+\section{Background}          % gives you a keynote-style break page
+
+\begin{frame}{Frame title}
+  \begin{block}{Definition — ...}...\end{block}
+  \begin{alertblock}{Theorem (...)}...\end{alertblock}
+  \begin{itemize} \item ... \end{itemize}   % also columns, tables, ...
 \end{frame}
 ```
 
-Also: `\bignum{101}{caption}` · `\heroimage{figures/…}` · `\bigequation{…}` · `\CYtitleframe` · `\CYclosingframe{qr-url}{qr-label}{contact}`. Title and author are set with the usual `\title`, `\subtitle`, `\author`.
+Set pieces: `\bignum{101}{caption}` · `\heroimage{figures/…}` · `\bigequation{…}` · `\statement{…}`/`\kicker{…}`/`\substatement{…}` · `\CYtitleframe` · `\CYclosingframe{qr-url}{qr-label}{contact}`. Title, author, and date are the usual `\title[short]`, `\subtitle`, `\author[short]`, `\date`.
 
 > beamer cannot produce a tagged (PDF/UA) PDF; this deck is accessible by design instead — contrast, structure, bundled fonts.
 

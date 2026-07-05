@@ -1,141 +1,239 @@
 % ======================================================================
-%  beamer-keynote.tex -- START HERE. One idea per slide; the theme
-%  (beamerthemeAUkeynote.sty) does everything else.
+%  beamer-keynote.tex -- START HERE. A defense-style academic deck;
+%  the theme (beamerthemeAUkeynote.sty) does everything else.
 %
-%  A frame is one of:
-%    \statement{...}  [+ \substatement{...}]  [after a \kicker{...}]
-%    \bignum{101}{caption}
-%    \heroimage{figures/...}
-%    \bigequation{...}
+%  Anatomy: \section{...} gives you a keynote-style break page for
+%  free. Inside frames use normal beamer: itemize, block, alertblock,
+%  columns... plus \bignum, \heroimage, \bigequation for set pieces.
 %
 %  COMPILE WITH LuaLaTeX:   latexmk    (Overleaf: Menu -> Compiler -> LuaLaTeX)
 % ======================================================================
 \documentclass[aspectratio=169]{beamer}
 \usetheme{AUkeynote}
 
-\title{Calabi–Yau Manifolds}
+\title[Calabi–Yau Manifolds]{Calabi–Yau Manifolds}
 \subtitle{What they are, why they exist, and why they matter}
-\author{Franklin Wang\, · \,Auburn University}
+\author[F. Wang]{Franklin Wang\, · \,Auburn University}
+\date{Ph.D. defense · July 2026}
 
 \begin{document}
 
 \CYtitleframe
 
-% ---- the idea in one line --------------------------------------------
-\begin{frame}[plain]
-  \statement{One cheap topological test buys\\the richest geometry of all.}
-  \substatement{$c_1 = 0 \;\Longrightarrow\; \operatorname{Ric} = 0$, guaranteed.}
+\begin{frame}{Outline}
+  \vspace{0.4em}
+  \tableofcontents
 \end{frame}
 
-% ---- manifolds ---------------------------------------------------------
-\begin{frame}[plain]
-  \kicker{What is a manifold?}
-  \statement{A smooth shape. Any dimension.}
+% ======================================================================
+\section{Background: shapes and curvature}
+% ======================================================================
+
+\begin{frame}{Manifolds: smooth shapes of any dimension}
+  \begin{block}{Definition — manifold}
+    A space that looks \emph{flat} up close: around every point there are
+    coordinates, the way the Earth looks flat from where you stand.
+  \end{block}
+  \begin{itemize}
+    \item The number of coordinates is the \textbf{dimension}; a circle,
+          the skin of a doughnut, and spacetime are all manifolds.
+    \item We work with \textbf{compact} manifolds: finite and edgeless,
+          closed up like a sphere rather than sprawling like a plain.
+    \item \textbf{Complex} manifolds run on coordinates $x + iy$ —
+          each complex dimension carries two real ones, so a threefold
+          $(n = 3)$ is a six-dimensional world.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
-  \statement{Up close, it looks flat.}
-  \substatement{The Earth looks flat from where you stand.}
+\begin{frame}{Curvature is intrinsic: draw a triangle}
+  \heroimage[0.42\paperheight]{figures/curvature-trio.png}
+  \vspace{0.5em}
+  \begin{itemize}
+    \item On a \textbf{sphere} the angles sum to \emph{more} than $180^\circ$;
+          on a \textbf{saddle}, to \emph{less}; only a \textbf{flat} sheet
+          gives exactly $180^\circ$.
+    \item An ant that never leaves the surface could discover its world is
+          curved — curvature is \textbf{intrinsic}, and varies from point to point.
+  \end{itemize}
 \end{frame}
 
-% ---- complex dimensions ------------------------------------------------
-\begin{frame}[plain]
-  \kicker{Complex dimensions}
-  \statement{One complex dimension\\carries two real ones.}
+\begin{frame}{Ricci curvature: the piece that controls volume}
+  \begin{block}{What $\operatorname{Ric}$ measures}
+    Sprinkle a small ball of dust and let each speck drift along a
+    geodesic: on a sphere the ball \emph{shrinks}, on a saddle it
+    \emph{swells}; when $\operatorname{Ric} = 0$ it keeps its volume exactly.
+  \end{block}
+  \begin{itemize}
+    \item A $\operatorname{Ric} = 0$ space is genuinely curved, yet
+          volume-balanced.
+    \item This is precisely Einstein's equation for empty spacetime:
+          \textbf{Ricci-flat spaces are gravity's vacuums}.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
-  \bignum{6}{real dimensions in a Calabi–Yau threefold $(n = 3)$}
+% ======================================================================
+\section{Calabi–Yau manifolds and Yau's theorem}
+% ======================================================================
+
+\begin{frame}{The definition, and one cheap invariant}
+  \begin{block}{Definition — Calabi–Yau manifold}
+    A compact complex manifold that is (1) \textbf{Kähler} — metric and
+    complex coordinates fit together as smoothly as possible — and
+    (2) carries a \textbf{holomorphic volume form} $\Omega$ that vanishes
+    nowhere (a trivial canonical bundle, $K_X \cong \mathcal{O}_X$).
+  \end{block}
+  \begin{itemize}
+    \item Feature (2) forces a purely \textbf{topological} number to vanish:
+          the first Chern class, $c_1(X) = 0$.
+    \item $c_1$ is a whole-number invariant — computable \emph{without
+          measuring anything}.
+    \item Calabi's question (1954): does that cheap test force a
+          Ricci-flat metric to exist?
+  \end{itemize}
 \end{frame}
 
-% ---- curvature ---------------------------------------------------------
-\begin{frame}[plain]
-  \kicker{Curvature}
-  \statementsmall{Draw a triangle. Add the angles.}
-  \vspace{1.2em}
-  \heroimage[0.40\paperheight]{figures/curvature-trio.png}
-  \substatement{Sphere: more than $180^\circ$ \,·\, flat: exactly $180^\circ$ \,·\, saddle: less}
-\end{frame}
-
-\begin{frame}[plain]
-  \statement{Curvature is intrinsic.}
-  \substatement{An ant that never leaves the surface\\could discover its world is round.}
-\end{frame}
-
-\begin{frame}[plain]
-  \kicker{Ricci curvature}
-  \statement{Ricci curvature controls volume.}
-  \substatement{$\operatorname{Ric} = 0$: curved, yet volume-balanced — gravity's vacuum.}
-\end{frame}
-
-% ---- the definition ----------------------------------------------------
-\begin{frame}[plain]
-  \kicker{The definition}
-  \statement{Compact. Kähler.\\A volume form that never vanishes.}
-  \substatement{A trivial canonical bundle forces $c_1(X) = 0$ — one whole number, free to compute.}
-\end{frame}
-
-\begin{frame}[plain]
-  \statement{Does $c_1 = 0$ force\\a Ricci-flat metric?}
-  \substatement{Calabi's question, 1954.}
-\end{frame}
-
-% ---- the theorem -------------------------------------------------------
-\begin{frame}[plain]
-  \kicker{Yau, 1978 — the Calabi conjecture}
+\begin{frame}{Yau's theorem}
+  \begin{alertblock}{Theorem (Yau 1978 — the Calabi conjecture)}
+    Let $(X,\omega)$ be a compact Kähler manifold with $c_1(X) = 0$ in
+    $H^2(X,\mathbb{R})$. Then $X$ carries a \emph{unique} Ricci-flat
+    Kähler metric $\tilde\omega$ with $[\tilde\omega] = [\omega]$.
+  \end{alertblock}
+  \vspace{0.4em}
   \bigequation{\operatorname{Ric}(\tilde\omega) \;=\; 0}
-  \substatement{A unique Ricci-flat metric — one in every Kähler class.}
+  \vspace{0.2em}
+  \begin{itemize}
+    \item One topological test, $c_1 = 0$, buys the richest geometry of all —
+          \textbf{guaranteed}, one metric in every Kähler class.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[plain]
-  \kicker{How?}
-  \statementsmall{Everything reduces to one equation.}
-  \vspace{0.9em}
-  {\centering\color{Ink}\fontsize{23}{29}\selectfont
-   $\bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{n} = e^{F}\omega^{n}$\par}
-  \substatement{The complex Monge–Ampère equation, solved by a priori estimates.}
+\begin{frame}{How it is proved: one nonlinear equation}
+  \begin{itemize}
+    \item Fix an overall scale: every candidate metric is
+          $\omega + i\,\partial\bar\partial\varphi$ for a single unknown
+          function $\varphi$.
+    \item Ricci-flatness becomes the \textbf{complex Monge–Ampère equation}
+          \[ \bigl(\omega + i\,\partial\bar\partial\varphi\bigr)^{n}
+             \;=\; e^{F}\,\omega^{n}, \]
+          whose unknown sits inside a determinant of its own second derivatives.
+    \item Yau's \textbf{a priori estimates} close the continuity method:
+          uniform control of $\varphi$, then of its second derivatives,
+          forces a solution to exist.
+  \end{itemize}
 \end{frame}
 
-% ---- see one -----------------------------------------------------------
-\begin{frame}[plain]
-  \heroimage[0.74\paperheight]{figures/calabi-yau-quintic.png}
-  \substatement{A slice of the Fermat quintic, $z_1^5 + z_2^5 = 1$.}
+% ======================================================================
+\section{Examples and moduli}
+% ======================================================================
+
+\begin{frame}{The simplest one: a torus}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \begin{itemize}
+        \item In one complex dimension the definition selects exactly one
+              shape: the torus $\mathbb{C}/\Lambda$.
+        \item Its volume form $dz$ descends from the plane; its Ricci-flat
+              metric is the flat geometry a sheet of paper keeps when rolled
+              up in two directions.
+        \item Everything Yau's theorem promises — visible by hand.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \heroimage[0.42\paperheight]{figures/cy-torus.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
-  \kicker{The simplest one}
-  \heroimage[0.46\paperheight]{figures/cy-torus.png}
-  \substatement{A donut: a flat sheet, rolled up in two directions.}
+\begin{frame}{The family album: one equation each}
+  A degree-$d$ hypersurface in $\mathbb{P}^{n+1}$ is Calabi–Yau exactly
+  when $d = n + 2$:
+  \vspace{0.5em}
+  \begin{center}
+    \begin{tabular}{c l l}
+      \toprule
+      \textbf{dim} & \textbf{Calabi–Yau} & \textbf{why $K_X \cong \mathcal{O}_X$} \\
+      \midrule
+      $1$ & elliptic curve $\mathbb{C}/\Lambda$ & $dz$ descends \\
+      $2$ & K3 surface, e.g.\ $X_4 \subset \mathbb{P}^3$ & $4 = 2 + 2$ \\
+      $3$ & quintic $X_5 \subset \mathbb{P}^4$ & $5 = 3 + 2$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \vspace{0.5em}
+  \begin{itemize}
+    \item The quintic alone moves in a \textbf{101-parameter family} of
+          Ricci-flat worlds.
+  \end{itemize}
 \end{frame}
 
-% ---- the family --------------------------------------------------------
-\begin{frame}[plain]
-  \kicker{The family album}
-  \statement{$d = n + 2$}
-  \substatement{elliptic curve \,·\, K3 surface \,·\, the quintic}
+\begin{frame}{Seeing a threefold: a slice of the quintic}
+  \begin{columns}[c]
+    \begin{column}{0.46\textwidth}
+      \begin{itemize}
+        \item Six real dimensions — too many to draw, not too many to
+              \emph{slice}.
+        \item Shown: the complex curve $z_1^5 + z_2^5 = 1$ inside the Fermat
+              quintic $z_0^5 + \cdots + z_4^5 = 0$ in $\mathbb{P}^4$,
+              projected to $3$-space.
+        \item Its $25$ patches carry the standard Hanson parametrization.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \heroimage[0.62\paperheight]{figures/calabi-yau-quintic.png}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
-  \bignum{101}{parameters in the quintic's family of Ricci-flat worlds}
+% ======================================================================
+\section{Why it matters}
+% ======================================================================
+
+\begin{frame}{String theory: six hidden dimensions}
+  \begin{itemize}
+    \item String theory needs spacetime to have \textbf{ten} dimensions —
+          four we see, six curled up too small to notice.
+    \item Candelas–Horowitz–Strominger–Witten (1985): when the hidden six
+          form a \textbf{Calabi–Yau threefold}, the four-dimensional physics
+          keeps supersymmetry.
+    \item Yau's Ricci-flat metric is the vacuum: if string theory is right,
+          a shape like the quintic sits at every point of space.
+  \end{itemize}
 \end{frame}
 
-% ---- physics -----------------------------------------------------------
-\begin{frame}[plain]
-  \kicker{String theory}
-  \statement{Ten dimensions. Four we see.}
-  \substatement{The hidden six form a Calabi–Yau. \,(Candelas–Horowitz–Strominger–Witten, 1985)}
+\begin{frame}{Mirror symmetry: a shape and its mirror}
+  \begin{itemize}
+    \item Calabi–Yau threefolds come in pairs: each $X$ has a
+          \textbf{mirror} $X^{\vee}$ with its two ``shape numbers''
+          swapped — ways to \emph{resize} versus ways to \emph{deform}.
+    \item String theory cannot tell the pair apart.
+    \item Candelas–de la Ossa–Green–Parkes (1991) turned this into
+          enumerative geometry: counting curves on $X$ by an integral
+          on $X^{\vee}$.
+  \end{itemize}
+  \vspace{0.4em}
+  \begin{center}
+    {\KeynoteSemibold\fontsize{20}{24}\selectfont\color{AUorange}
+     $2875$ lines\quad·\quad$609{,}250$ conics}\par
+    \vspace{0.25em}
+    {\KeynoteLight\fontsize{11}{14}\selectfont\color{Quiet}
+     on the quintic — counted on its mirror\par}
+  \end{center}
 \end{frame}
 
-\begin{frame}[plain]
-  \kicker{Mirror symmetry}
-  \statement{Every shape has a mirror.}
-  \substatement{$2875$ lines and $609{,}250$ conics on the quintic — counted on its mirror, 1991.}
-\end{frame}
+% ======================================================================
+\section{Conclusion}
+% ======================================================================
 
-% ---- takeaway ----------------------------------------------------------
-\begin{frame}[plain]
-  \statement{One test. Perfect geometry.}
-  \substatement{$c_1 = 0 \;\Longrightarrow\; \operatorname{Ric} = 0$ — where analysis, algebra, and physics meet.}
+\begin{frame}{What to take home}
+  \begin{itemize}
+    \item A Calabi–Yau manifold passes \textbf{one topological test},
+          $c_1 = 0$ — and Yau's theorem rewards it with perfect geometry,
+          $\operatorname{Ric} = 0$.
+    \item The reward is \emph{guaranteed and unique} in every Kähler class,
+          via one nonlinear PDE.
+    \item The same shapes carry string compactifications and mirror
+          symmetry: \textbf{analysis, algebra, and physics meet here}.
+  \end{itemize}
 \end{frame}
 
 \CYclosingframe{https://www.linkedin.com/in/franklin-wang-a14b7b327}%

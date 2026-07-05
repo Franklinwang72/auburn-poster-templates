@@ -1,20 +1,20 @@
 % ======================================================================
-%  beamerthemeAUkeynote -- an Auburn keynote, the way Jobs would cut it.
+%  beamerthemeAUkeynote -- a clean academic defense deck for Auburn.
 %
-%  One idea per slide. Giant type, tight leading, oceans of dark stage.
-%  A single family (Source Sans 3, the open cousin of Apple's Myriad),
-%  two weights. A white stage in Auburn ink; Auburn orange spent
-%  only on the few numbers and the one equation that matter. No
-%  bullets, no frame titles, no page numbers, no chrome; the logo
-%  appears on the first and last slide only.
+%  White stage, Auburn-navy ink, ONE orange accent. Real slide anatomy
+%  for a defense: frame titles with a short orange tick, a quiet
+%  footline with page numbers, understated theorem/definition blocks
+%  (pale ground, no borders), comfortable lists -- and keynote-style
+%  section pages (one big line on an empty stage) between the parts.
+%  The logo appears on the first and last slide only.
 %
-%  Slide vocabulary (all a frame ever needs):
-%    \kicker{...}                small gray eyebrow line
-%    \statement{...}             the one big sentence
-%    \substatement{...}          quiet gray afterthought
-%    \bignum{101}{caption}       a number as the whole slide
-%    \heroimage[h]{file}         one centered image
-%    \CYtitleframe  \CYclosingframe{qr-url}{label}
+%  Vocabulary beyond standard beamer:
+%    \sectionpage-style breaks come free via \section{...}
+%    \kicker / \statement / \substatement    keynote lines (section pages)
+%    \bignum{101}{caption}                   a number as a whole slide
+%    \heroimage[h]{file}                     one centered image
+%    \bigequation{...}                       display equation in orange
+%    \CYtitleframe   \CYclosingframe{qr-url}{qr-label}{contact}
 %
 %  Compile with LuaLaTeX. (beamer cannot produce tagged PDF/UA -- this
 %  deck is accessible-by-design instead: contrast, structure, fonts.)
@@ -37,15 +37,17 @@
 \usepackage{unicode-math}
 \setmathfont{STIXTwoMath-Regular.otf}[Path=fonts/]
 \setoperatorfont\symup
-
-% ----- the stage: white light, Auburn ink --------------------------------
+\usepackage{booktabs}
 \usepackage{qrcode}
 \usepackage{tikz}
+
+% ----- the stage: white light, Auburn ink --------------------------------
 \definecolor{StageTop}{RGB}{253,254,255}  % white, where the light falls
-\definecolor{StageDeep}{RGB}{243,246,250} % the faintest cool floor
+\definecolor{StageDeep}{RGB}{244,246,250} % the faintest cool floor
 \definecolor{Ink}{RGB}{12,35,64}          % Auburn navy (14.9:1)
-\definecolor{Quiet}{RGB}{106,117,132}     % kickers, afterthoughts (5.2:1)
+\definecolor{Quiet}{RGB}{106,117,132}     % secondary text (5.2:1)
 \definecolor{AUorange}{RGB}{232,97,0}     % spent only where it counts
+\definecolor{Ground}{RGB}{242,245,249}    % pale ground for blocks
 
 \setbeamertemplate{background canvas}{%
   \begin{tikzpicture}
@@ -54,62 +56,125 @@
       (0,0) rectangle (\paperwidth,\paperheight);
   \end{tikzpicture}}
 
-% ----- no chrome ----------------------------------------------------------
+% ----- global anatomy -----------------------------------------------------
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}{}
-\setbeamertemplate{headline}{}
 \setbeamercolor{normal text}{fg=Ink}
 \setbeamercolor{structure}{fg=Ink}
-\setbeamercolor{itemize item}{fg=AUorange}
-\setbeamertemplate{itemize item}{\raisebox{0.12em}{\rule{0.35em}{0.12em}}}
-\setbeamersize{text margin left=1.35cm, text margin right=1.35cm}
+\setbeamersize{text margin left=1.1cm, text margin right=1.1cm}
 \hypersetup{colorlinks=true, urlcolor=Quiet, linkcolor=Ink}
 
-% ----- the slide vocabulary ----------------------------------------------
-% small gray eyebrow line above a statement
+% frame title: navy, with a short orange tick beneath
+\setbeamertemplate{frametitle}{%
+  \vskip0.45cm
+  {\KeynoteSemibold\fontsize{15.5}{18.5}\selectfont\color{Ink}%
+   \insertframetitle\par}%
+  \vskip0.16cm
+  {\color{AUorange}\rule{0.85cm}{0.55mm}}\par
+  \vskip0.22cm}
+
+% footline: hairline, short title left, page counter right
+\setbeamertemplate{footline}{%
+  \hbox to \paperwidth{\hskip1.1cm
+    \vbox{\hrule height 0.4pt width \dimexpr\paperwidth-2.2cm\relax
+          \color{Ink!14}\vskip0.14cm
+      \hbox to \dimexpr\paperwidth-2.2cm\relax{%
+        {\KeynoteLight\fontsize{7.5}{9}\selectfont\color{Quiet}%
+         \insertshorttitle\ \,·\ \,\insertshortauthor}%
+        \hfil
+        {\KeynoteLight\fontsize{7.5}{9}\selectfont\color{Quiet}%
+         \insertframenumber\,/\,\inserttotalframenumber}}%
+      \vskip0.18cm}\hskip1.1cm}}
+
+% lists: a small orange dash, comfortable air between items
+\setbeamertemplate{itemize item}{\raisebox{0.14em}{\color{AUorange}\rule{0.34em}{0.115em}}}
+\setbeamertemplate{itemize subitem}{\raisebox{0.14em}{\color{Quiet}\rule{0.26em}{0.10em}}}
+\setbeamertemplate{enumerate item}{{\KeynoteSemibold\color{AUorange}\insertenumlabel.}}
+\setbeamerfont{itemize/enumerate body}{size=\normalsize}
+\setlength{\leftmargini}{1.05em}
+\setbeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{0.42em}}
+
+% blocks: one pale ground, no borders; only the title colour changes
+\setbeamerfont{block title}{series=\bfseries, size=\normalsize}
+\setbeamercolor{block title}{fg=Ink, bg=Ground}
+\setbeamercolor{block body}{fg=Ink, bg=Ground}
+\setbeamercolor{block title alerted}{fg=AUorange, bg=Ground}
+\setbeamercolor{block body alerted}{fg=Ink, bg=Ground}
+\setbeamercolor{block title example}{fg=Quiet, bg=Ground}
+\setbeamercolor{block body example}{fg=Ink, bg=Ground}
+\setbeamertemplate{block begin}{%
+  \par\vskip0.35em
+  \begin{beamercolorbox}[rounded=true, sep=0.55em]{block body}%
+  {\usebeamerfont{block title}\usebeamercolor[fg]{block title}\insertblocktitle\par}%
+  \vskip0.28em}
+\setbeamertemplate{block end}{\end{beamercolorbox}\vskip0.35em}
+\setbeamertemplate{block alerted begin}{%
+  \par\vskip0.35em
+  \begin{beamercolorbox}[rounded=true, sep=0.55em]{block body alerted}%
+  {\usebeamerfont{block title}\usebeamercolor[fg]{block title alerted}\insertblocktitle\par}%
+  \vskip0.28em}
+\setbeamertemplate{block alerted end}{\end{beamercolorbox}\vskip0.35em}
+\setbeamertemplate{block example begin}{%
+  \par\vskip0.35em
+  \begin{beamercolorbox}[rounded=true, sep=0.55em]{block body example}%
+  {\usebeamerfont{block title}\usebeamercolor[fg]{block title example}\insertblocktitle\par}%
+  \vskip0.28em}
+\setbeamertemplate{block example end}{\end{beamercolorbox}\vskip0.35em}
+
+% table of contents: orange numbers, navy entries
+\setbeamertemplate{section in toc}{%
+  {\KeynoteSemibold\color{AUorange}\inserttocsectionnumber.}\ \,%
+  {\color{Ink}\inserttocsection}\par\vskip0.5em}
+
+% ----- keynote lines (used on section pages and breathers) ---------------
 \newcommand{\kicker}[1]{%
   {\centering\KeynoteLight\fontsize{10.5}{13}\selectfont
    \color{Quiet}#1\par}\vspace{0.9em}}
-% the one big sentence (tight leading, semibold, near-white)
 \newcommand{\statement}[1]{%
   {\centering\KeynoteSemibold\fontsize{25}{31}\selectfont
    \color{Ink}#1\par}}
-% a slightly smaller statement, for two-beat slides
 \newcommand{\statementsmall}[1]{%
   {\centering\KeynoteSemibold\fontsize{19}{24}\selectfont
    \color{Ink}#1\par}}
-% quiet gray afterthought under a statement
 \newcommand{\substatement}[1]{%
   \vspace{1.1em}%
   {\centering\KeynoteLight\fontsize{12.5}{16}\selectfont
    \color{Quiet}#1\par}}
-% a number as the whole slide
 \newcommand{\bignum}[2]{%
   {\centering\KeynoteSemibold\fontsize{92}{96}\selectfont
    \color{AUorange}#1\par}%
   \vspace{0.55em}%
   {\centering\KeynoteLight\fontsize{13}{17}\selectfont
    \color{Quiet}#2\par}}
-% one centered image; optional height (default 0.62\paperheight)
 \newcommand{\heroimage}[2][0.62\paperheight]{%
   {\centering\includegraphics[height=#1]{#2}\par}}
-% the one display equation, in the one colour that matters
 \newcommand{\bigequation}[1]{%
-  {\centering\color{AUorange}\fontsize{34}{40}\selectfont
+  {\centering\color{AUorange}\fontsize{30}{36}\selectfont
    $\displaystyle #1$\par}}
+
+% section pages: a keynote breath between the parts, automatically
+\AtBeginSection[]{%
+  \begin{frame}[plain]\relax
+    {\centering\KeynoteLight\fontsize{11}{14}\selectfont\color{AUorange}
+     0\insertsectionnumber\par}
+    \vspace{0.9em}
+    \statement{\insertsection}
+  \end{frame}}
 
 % ----- title and closing frames ------------------------------------------
 \newcommand{\CYtitleframe}{%
   \begin{frame}[plain]
-    \vspace{0.14\paperheight}
-    {\centering\KeynoteSemibold\fontsize{33}{38}\selectfont\color{Ink}
+    \vspace{0.13\paperheight}
+    {\centering\KeynoteSemibold\fontsize{30}{35}\selectfont\color{Ink}
      \inserttitle\par}
     \vspace{0.9em}
-    {\centering\KeynoteLight\fontsize{13.5}{17}\selectfont\color{Quiet}
+    {\centering\KeynoteLight\fontsize{13}{17}\selectfont\color{Quiet}
      \insertsubtitle\par}
-    \vspace{2.1em}
+    \vspace{2.0em}
     {\centering\KeynoteLight\fontsize{12}{15}\selectfont\color{Ink!82!Quiet}
      \insertauthor\par}
+    \vspace{0.45em}
+    {\centering\KeynoteLight\fontsize{10.5}{13}\selectfont\color{Quiet}
+     \insertdate\par}
     \vfill
     {\centering\includegraphics[height=0.085\paperheight]{auburn-logo-color-cropped.png}\par}
     \vspace{0.05\paperheight}
@@ -117,15 +182,15 @@
 
 \newcommand{\CYclosingframe}[3]{%
   \begin{frame}[plain]
-    \vspace{0.15\paperheight}
-    {\centering\KeynoteSemibold\fontsize{26}{32}\selectfont\color{Ink}
+    \vspace{0.14\paperheight}
+    {\centering\KeynoteSemibold\fontsize{24}{30}\selectfont\color{Ink}
      \inserttitle\par}
     \vspace{1.1em}
     {\centering\KeynoteLight\fontsize{12}{15}\selectfont\color{Quiet}
      \insertauthor\, · \,#3\par}
-    \vspace{1.8em}
+    \vspace{1.7em}
     {\centering\begingroup
-       \hypersetup{urlcolor=Ink}\qrcode[height=0.145\paperheight]{#1}\endgroup\par}
+       \hypersetup{urlcolor=Ink}\qrcode[height=0.15\paperheight]{#1}\endgroup\par}
     \vspace{0.7em}
     {\centering\KeynoteLight\fontsize{9.5}{12}\selectfont\color{Quiet}#2\par}
     \vfill
